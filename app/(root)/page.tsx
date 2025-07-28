@@ -151,7 +151,7 @@ export default function Home() {
               alt="banner"
               width={220}
               height={220}
-              className="border border-black rounded-lg shadow-lg rotate-z-[-15deg] translate-x-[10rem] translate-y-[-5rem]"
+              className="border border-black rounded-lg shadow-lg rotate-z-[-15deg] translate-x-[3rem] translate-y-[-5rem]"
             />
           </div>
 
