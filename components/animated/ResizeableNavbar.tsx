@@ -269,7 +269,7 @@ export const NavBody = ({ className, visible }: NavBodyProps) => {
           <ShoppingBasket />
         </Button>
 
-        <Link href="/login">
+        <Link href="/authen">
           <RetroButton variant="secondary" size="sm">
             Login
           </RetroButton>
@@ -403,7 +403,7 @@ export const NavbarLogo = () => {
         src="/assets/my-store-logo.png"
         alt="logo"
         width={70}
-        height={80}
+        height={70}
       />
     </Link>
   );

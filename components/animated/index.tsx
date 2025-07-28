@@ -1,4 +1,5 @@
 export * from "./ResizeableNavbar";
 export * from "./RetroButton";
 export * from "./BlurText";
-export * from "./CategoryCard"
+export * from "./CategoryCard";
+export * from "./AnimatedContent";
