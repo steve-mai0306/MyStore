@@ -3,3 +3,6 @@ export * from "./RetroButton";
 export * from "./BlurText";
 export * from "./CategoryCard";
 export * from "./AnimatedContent";
+export * from "./Mansory";
+export * from "./CountUp";
+export * from "./MagicBento";

@@ -28,7 +28,7 @@ export default function Home() {
       <section className="product-category-section overflow-hidden">
         <Container>
           <div className="flex flex-col lg:flex-row items-start lg:items-center w-full justify-between">
-            <h2 className="text-5xl mb-6">
+            <h2 className="text-2xl lg:text-5xl mb-6">
               FIND A FIT <br></br> FOR EVERYONE
             </h2>
             <div className="category-tag-list flex flex-wrap justify-start lg:justify-end gap-4">
@@ -206,7 +206,7 @@ export default function Home() {
       <section className="top-sale-products py-10">
         <Container>
           <div className="flex flex-row items-center justify-between">
-            <h2 className="text-5xl mb-6">WHAT&apos;S HOT?</h2>
+            <h2 className="text-2xl lg:text-5xl">WHAT&apos;S HOT?</h2>
             <RetroButton variant="link">
               VIEW ALL <ArrowRight className="ml-2" />
             </RetroButton>

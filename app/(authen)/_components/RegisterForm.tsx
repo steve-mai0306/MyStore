@@ -33,6 +33,11 @@ export function RegisterForm({
     resolver: zodResolver(signupFormSchema),
     defaultValues: {
       email: "",
+      firstName: "",
+      lastName: "",
+      shopName: "",
+      phoneNumber: "",
+      type: "customer",
     },
   });
   const onSubmit = (data: SignupFormValues) => {
@@ -49,10 +54,8 @@ export function RegisterForm({
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="rounded-none">
         <CardHeader>
-          <CardTitle>REGISTER</CardTitle>
-          <CardDescription>
-            Let&apos;s create your account!
-          </CardDescription>
+          <CardTitle className="text-2xl">REGISTER</CardTitle>
+          <CardDescription>Let&apos;s create your account!</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -121,7 +124,7 @@ export function RegisterForm({
                         name="shopName"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>First Name</FormLabel>
+                            <FormLabel>Shop Name</FormLabel>
                             <FormControl>
                               <Input {...field} required />
                             </FormControl>
