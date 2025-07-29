@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Bricolage_Grotesque } from "next/font/google";
 import "./globals.css";
-import { Header } from "@/components/layout";
+import { Header, Footer } from "@/components/layout";
 
 const bricolage = Bricolage_Grotesque({
   variable: "--font-bricolage",
@@ -27,6 +27,7 @@ export default function RootLayout({
       >
         <Header />
         {children}
+        <Footer />
       </body>
     </html>
   );
