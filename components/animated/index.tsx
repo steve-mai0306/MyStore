@@ -6,3 +6,4 @@ export * from "./AnimatedContent";
 export * from "./Mansory";
 export * from "./CountUp";
 export * from "./MagicBento";
+export * from "./Network";

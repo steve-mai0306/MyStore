@@ -103,7 +103,7 @@ import React, {
         "(min-width:600px)",
         "(min-width:400px)",
       ],
-      [5, 4, 3, 2],
+      [3, 2, 1], 
       1
     );
   

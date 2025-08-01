@@ -547,7 +547,7 @@ const BentoCardGrid: React.FC<{
   gridRef?: React.RefObject<HTMLDivElement | null>;
 }> = ({ children, gridRef }) => (
   <div
-    className="bento-section grid gap-2 p-3  select-none relative"
+    className="bento-section grid gap-2 pt-10 select-none relative"
     style={{ fontSize: "clamp(1rem, 0.9rem + 0.5vw, 1.5rem)" }}
     ref={gridRef}
   >
@@ -610,7 +610,6 @@ export const MagicBento: React.FC<BentoProps> = ({
             grid-template-columns: 1fr;
             width: 90%;
             margin: 0 auto;
-            padding: 0.5rem;
           }
           
           @media (min-width: 600px) {
@@ -758,11 +757,16 @@ export const MagicBento: React.FC<BentoProps> = ({
                   enableMagnetism={enableMagnetism}
                 >
                   <div className="card__header flex justify-between gap-3 relative text-black uppercase">
-                    <span className="card__label text-base font-bold bg-white z-10 p-3 rounded-full">
+                    <span className="card__label text-sm font-bold bg-white z-10 p-3 rounded-full">
                       {card.label}
                     </span>
                   </div>
-                  <Image src={card.image ?? ""} alt="" fill />
+                  <Image
+                    src={card.image ?? ""}
+                    alt=""
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    fill
+                  />
                   <div className="card__content flex flex-col relative text-white font-bold underline z-10 p-2 rounded-xl w-fit">
                     <h3
                       className={`card__title font-normal text-base m-0 mb-1 ${
