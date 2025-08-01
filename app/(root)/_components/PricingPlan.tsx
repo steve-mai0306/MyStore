@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
-import { RetroButton } from "@/components/animated";
+import { InteractiveHoverButton } from "@/components/magicui/interactive-hover-button";
 
 // Helper component for animating numbers with a "smokey" effect
 interface AnimatedPriceProps {
@@ -145,7 +145,7 @@ export const PricingPlan = () => {
       <div className="relative z-10 flex items-center justify-center min-h-screen">
         <div className="w-full">
           <div className="text-center">
-            <h2 className="text-2xl lg:text-5xl my-3 text-center font-bold">
+            <h2 className="text-2xl lg:text-5xl my-3 text-center font-bold tracking-wide">
               Pricing Plans
             </h2>
             <h2 className="text-lg text-muted-foreground my-3 text-center">
@@ -236,7 +236,7 @@ export const PricingPlan = () => {
                 key={tier.name}
                 className={`relative flex flex-col p-8 rounded-xl border transition-all duration-300 ${
                   tier.isPopular
-                    ? "border-ring bg-white/90 dark:bg-black/60"
+                    ? "border-rose-500 bg-muted dark:bg-black/60"
                     : "border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-900/60"
                 }`}
                 style={{
@@ -308,8 +308,7 @@ export const PricingPlan = () => {
                 </ul>
 
                 <div className="mt-8">
-                  <RetroButton
-                    variant="default"
+                  <InteractiveHoverButton
                     className="w-full"
                     onClick={() => {
                       const price = isMonthly
@@ -323,7 +322,7 @@ export const PricingPlan = () => {
                     }}
                   >
                     {tier.buttonText}
-                  </RetroButton>
+                  </InteractiveHoverButton>
                 </div>
               </motion.div>
             ))}

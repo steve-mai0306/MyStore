@@ -3,9 +3,9 @@
 import React from "react";
 import { SwiperCarousel } from "./_components";
 import { Container } from "@/components/layout";
-import { RetroButton } from "@/components/animated";
-import { CategoryCard } from "@/components/animated";
-import { FeatureCard } from "./_components";
+import { InteractiveHoverButton } from "@/components/magicui/interactive-hover-button";
+import { CategoryCard, RetroButton } from "@/components/animated";
+import { FeatureCard, ProductListSection } from "./_components";
 import {
   Globe,
   Shirt,
@@ -32,28 +32,24 @@ export default function Home() {
               FIND A FIT <br></br> FOR EVERYONE
             </h2>
             <div className="category-tag-list flex flex-wrap justify-start lg:justify-end gap-4 w-[70%]">
-              <RetroButton
-                size="lg"
-                variant="default"
-                className="bg-yellow-700"
-              >
+              <InteractiveHoverButton className="bg-yellow-700 py-4">
                 T-SHIRT
-              </RetroButton>
-              <RetroButton size="lg" variant="default" className="bg-teal-200">
+              </InteractiveHoverButton>
+              <InteractiveHoverButton className="bg-teal-200 py-4 ">
                 SWEARTSHIRT
-              </RetroButton>
-              <RetroButton size="lg" variant="default" className="bg-pink-500">
+              </InteractiveHoverButton>
+              <InteractiveHoverButton className="bg-pink-500 py-4">
                 HOODIE
-              </RetroButton>
-              <RetroButton size="lg" variant="default" className="bg-blue-400">
+              </InteractiveHoverButton>
+              <InteractiveHoverButton className="bg-blue-400 py-4">
                 TANK TOP
-              </RetroButton>
-              <RetroButton size="lg" variant="default">
+              </InteractiveHoverButton>
+              <InteractiveHoverButton className="bg-lime-500 py-4">
                 LONG_SLEEVES
-              </RetroButton>
+              </InteractiveHoverButton>
             </div>
           </div>
-          <div className="pt-10 flex flex-col lg:flex-row gap-4 items-center w-full justify-between">
+          <div className="pt-10 flex flex-wrap md:flex-row gap-4 items-center w-full justify-center xl:justify-between">
             <CategoryCard
               imageSrc="/assets/men-banner.jpg"
               altText="Kendrick Lamar - GNX Album Cover"
@@ -62,15 +58,15 @@ export default function Home() {
               containerWidth="22rem"
               imageHeight="30rem"
               imageWidth="22rem"
-              rotateAmplitude={12}
-              scaleOnHover={1.2}
+              rotateAmplitude={5}
+              scaleOnHover={1}
               showMobileWarning={false}
               showTooltip={true}
               displayOverlayContent={true}
               overlayContent={
-                <RetroButton variant="secondary">
-                  MEN&apos;S COLLECTION <ChevronRightIcon />
-                </RetroButton>
+                <InteractiveHoverButton icon={<ChevronRightIcon />}>
+                  MEN&apos;S COLLECTION
+                </InteractiveHoverButton>
               }
             />
             <CategoryCard
@@ -81,15 +77,15 @@ export default function Home() {
               containerWidth="22rem"
               imageHeight="30rem"
               imageWidth="22rem"
-              rotateAmplitude={12}
-              scaleOnHover={1.2}
+              rotateAmplitude={5}
+              scaleOnHover={1}
               showMobileWarning={false}
               showTooltip={true}
               displayOverlayContent={true}
               overlayContent={
-                <RetroButton variant="secondary">
-                  KID&apos;S COLLECTION <ChevronRightIcon />
-                </RetroButton>
+                <InteractiveHoverButton icon={<ChevronRightIcon />}>
+                  KID&apos;S COLLECTION
+                </InteractiveHoverButton>
               }
             />
             <CategoryCard
@@ -100,15 +96,15 @@ export default function Home() {
               containerWidth="22rem"
               imageHeight="30rem"
               imageWidth="22rem"
-              rotateAmplitude={12}
-              scaleOnHover={1.2}
+              rotateAmplitude={5}
+              scaleOnHover={1}
               showMobileWarning={false}
               showTooltip={true}
               displayOverlayContent={true}
               overlayContent={
-                <RetroButton variant="secondary">
-                  WOMEN&apos;S COLLECTION <ChevronRightIcon />
-                </RetroButton>
+                <InteractiveHoverButton icon={<ChevronRightIcon />}>
+                  WOMEN&apos;S COLLECTION
+                </InteractiveHoverButton>
               }
             />
           </div>
@@ -117,7 +113,7 @@ export default function Home() {
 
       <section className="shop-featured-highlights-section py-20">
         <Container>
-          <div className="flex flex-col lg:flex-row flex-wrap justify-between">
+          <div className="flex flex-col lg:flex-row flex-wrap justify-between gap-4">
             <FeatureCard
               icon={<Globe className="icon" size={64} strokeWidth={1} />}
               title="World"
@@ -149,9 +145,9 @@ export default function Home() {
               <Image
                 src="/assets/banner-subsection-1.jpg"
                 alt="banner"
-                width={280}
-                height={280}
-                className="border border-black rounded-lg shadow-lg rotate-z-[15deg]"
+                width={220}
+                height={220}
+                className="border border-black rounded-lg shadow-lg rotate-z-[15deg] translate-y-5"
               />
               <Image
                 src="/assets/banner-subsection-1.2.jpg"
@@ -173,14 +169,13 @@ export default function Home() {
 
                 <BoxReveal boxColor={"blue"} duration={0.5}>
                   <h2 className="mt-[.5rem] text-[1rem]">
-                    UI library for{" "}
-                    <span className="">Design Engineers</span>
+                    UI library for <span className="">Design Engineers</span>
                   </h2>
                 </BoxReveal>
 
-                <RetroButton variant="secondary" size="icon" className="mt-4">
+                <InteractiveHoverButton className="mt-4">
                   <Play />
-                </RetroButton>
+                </InteractiveHoverButton>
               </div>
             </div>
 
@@ -219,6 +214,7 @@ export default function Home() {
               VIEW ALL <ArrowRight className="ml-2" />
             </RetroButton>
           </div>
+          <ProductListSection />
         </Container>
       </section>
     </>

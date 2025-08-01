@@ -2,7 +2,7 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Container } from "./Container";
+import { InteractiveHoverButton } from "../magicui/interactive-hover-button";
 
 export const Footer = () => {
   const footerLinks = {
@@ -127,12 +127,11 @@ export const Footer = () => {
               Trusted in more than 100 countries & 5 million customers. Have any
               query ?
             </p>
-            <a
-              href="#"
-              className="py-2.5 px-5 h-9 block w-fit bg-indigo-600 dark:bg-indigo-500 rounded-full shadow-sm text-xs text-white mx-auto transition-all duration-500 hover:bg-indigo-700 dark:hover:bg-indigo-600 lg:mx-0"
-            >
-              Contact us
-            </a>
+            <Link href="#">
+              <InteractiveHoverButton className="uppercase">
+                Contact us
+              </InteractiveHoverButton>
+            </Link>
           </div>
 
           {/* Link Columns */}

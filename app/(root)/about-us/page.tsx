@@ -8,7 +8,7 @@ import Masonry from "@/components/animated/Mansory";
 import { Separator } from "@/components/ui/separator";
 import { CountUp } from "@/components/animated";
 import Accordion from "@/components/ui/accordion";
-import { RetroButton } from "@/components/animated";
+import { InteractiveHoverButton } from "@/components/magicui/interactive-hover-button";
 import { ArrowRight } from "lucide-react";
 import { MagicBento } from "@/components/animated";
 import { AnimatedContent } from "@/components/animated";
@@ -94,7 +94,7 @@ export default function AboutUsPage() {
         <section className="introduction-section pb-15">
           <div className="flex flex-col lg:flex-row gap-10">
             <div className="flex flex-col w-full lg:w-1/2">
-              <h2 className="text-2xl lg:text-4xl my-3 font-bold uppercase">
+              <h2 className="text-2xl lg:text-4xl my-3 font-bold uppercase tracking-wide">
                 Bring you the best collections for your style
               </h2>
               <h2 className="text-lg text-muted-foreground my-3">
@@ -102,7 +102,9 @@ export default function AboutUsPage() {
                 fit—with some of the top acne-busting ingredients prescribed by
                 dermatologists nationwide.
               </h2>
-              <h2 className="text-xl lg:text-3xl my-3 uppercase">Our Mission</h2>
+              <h2 className="text-xl lg:text-3xl my-3 uppercase">
+                Our Mission
+              </h2>
               <h2 className="text-lg text-muted-foreground my-3">
                 Get skincare made to fit—with some of the top acne-busting
                 ingredients prescribed by dermatologists nationwide.
@@ -127,7 +129,9 @@ export default function AboutUsPage() {
                     duration={1}
                     className="text-3xl font-bold"
                   />
-                  <p className="text-muted-foreground uppercase">Happy Clients</p>
+                  <p className="text-muted-foreground uppercase">
+                    Happy Clients
+                  </p>
                 </div>
                 <div className="flex flex-col items-start w-1/2">
                   <CountUp
@@ -138,7 +142,9 @@ export default function AboutUsPage() {
                     duration={1}
                     className="text-3xl font-bold"
                   />
-                  <p className="text-muted-foreground uppercase">5 Start Reviewed</p>
+                  <p className="text-muted-foreground uppercase">
+                    5 Start Reviewed
+                  </p>
                 </div>
               </div>
             </div>
@@ -158,7 +164,7 @@ export default function AboutUsPage() {
           </div>
         </section>
         <section className="faqs-section pb-15">
-          <div className="flex flex-col lg:flex-row gap-10"> 
+          <div className="flex flex-col lg:flex-row gap-10">
             <div className="flex flex-col w-full items-center justify-center lg:w-1/2 bg-gradient-to-b from-pink-100 to-blue-300 relative gap-2 py-5">
               <span className="text-3xl md:text-5xl tracking-wider font-bold text-pink-400 leading-5 text-center uppercase ">
                 See Tips
@@ -183,16 +189,15 @@ export default function AboutUsPage() {
                 />
               </AnimatedContent>
 
-              <RetroButton
-                variant="secondary"
-                size="sm"
+              <InteractiveHoverButton
                 className="uppercase absolute bottom-10 w-xs"
+                icon={<ArrowRight />}
               >
-                Contact us <ArrowRight className="ml-2" />
-              </RetroButton>
+                Contact us
+              </InteractiveHoverButton>
             </div>
             <div className="flex flex-col w-full lg:w-1/2 items-center justify-start">
-              <h2 className="text-2xl lg:text-4xl my-3 uppercase font-bold">
+              <h2 className="text-2xl lg:text-4xl my-3 uppercase font-bold tracking-wide">
                 Frequently Asked Questions
               </h2>
               <div className="flex flex-col items-center justify-center py-4 transition-colors duration-500">
@@ -203,8 +208,8 @@ export default function AboutUsPage() {
             </div>
           </div>
         </section>
-        <section className="spotlight-section pb-15">
-          <h2 className="text-2xl lg:text-4xl my-3 text-center font-bold uppercase">
+        <section className="spotlight-section pb-20">
+          <h2 className="text-2xl lg:text-4xl my-3 text-center font-bold uppercase tracking-wide">
             What make us different?
           </h2>
           <AnimatedContent
@@ -235,7 +240,7 @@ export default function AboutUsPage() {
           </AnimatedContent>
         </section>
         <section className="network-section pb-15">
-          <h2 className="text-2xl lg:text-4xl my-3 text-center font-bold uppercase">
+          <h2 className="text-2xl lg:text-4xl my-3 text-center font-bold uppercase tracking-wide">
             We bring people together
           </h2>
           <h2 className="text-lg text-muted-foreground my-3 text-center">

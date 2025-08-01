@@ -1,6 +1,6 @@
 "use client";
 import { cn } from "@/lib/utils";
-import { Menu, X, Search, Star, ShoppingBasket, MoveRight } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import {
   motion,
   AnimatePresence,
@@ -17,10 +17,10 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
-  Button,
 } from "../ui";
-import { RetroButton } from "./RetroButton";
+import { NavIcon } from "../styled";
 
+import { InteractiveHoverButton } from "../magicui/interactive-hover-button";
 
 import React, { useRef, useState } from "react";
 
@@ -71,7 +71,7 @@ export const Navbar = ({ children, className }: NavbarProps) => {
   const [visible, setVisible] = useState<boolean>(false);
 
   useMotionValueEvent(scrollY, "change", (latest) => {
-    if (latest > 100) {
+    if (latest > 20) {
       setVisible(true);
     } else {
       setVisible(false);
@@ -83,7 +83,7 @@ export const Navbar = ({ children, className }: NavbarProps) => {
       ref={ref}
       // IMPORTANT: Change this to class of `fixed` if you want the navbar to be fixed
       className={cn(
-        "fixed inset-x-0 top-0 z-100 w-full transition-colors duration-300",
+        "sticky inset-x-0 top-0 z-100 w-full transition-colors duration-300",
         visible ? "bg-transparent" : "bg-transparent",
         className
       )}
@@ -120,7 +120,7 @@ export const NavBody = ({ className, visible }: NavBodyProps) => {
         minWidth: "800px",
       }}
       className={cn(
-        "relative z-[60] mx-auto hidden w-full max-w-7xl flex-row items-center justify-between self-start rounded-full bg-transparent px-4 py-2 lg:flex dark:bg-transparent",
+        "relative z-[60] w-[50%] mx-auto hidden max-w-7xl flex-row items-center justify-between self-start rounded-full bg-transparent px-4 py-2 lg:flex dark:bg-transparent",
         visible && "bg-white/80 dark:bg-neutral-950/80",
         className
       )}
@@ -144,7 +144,7 @@ export const NavBody = ({ className, visible }: NavBodyProps) => {
                         My Store
                       </div>
                       <p className="text-muted-foreground text-sm leading-tight">
-                        Beautifully designed components built with Tailwind CSS.
+                        A mordern platform to help you expand your business.
                       </p>
                     </Link>
                   </NavigationMenuLink>
@@ -165,20 +165,10 @@ export const NavBody = ({ className, visible }: NavBodyProps) => {
         <NavigationMenuList>
           <NavigationMenuItem>
             <NavigationMenuTrigger className={navigationMenuTriggerStyle()}>
-              FEATURES
-            </NavigationMenuTrigger>
-            <NavigationMenuContent>
-              <NavigationMenuLink href="#features">Welcome</NavigationMenuLink>
-            </NavigationMenuContent>
-          </NavigationMenuItem>
-        </NavigationMenuList>
-        <NavigationMenuList>
-          <NavigationMenuItem>
-            <NavigationMenuTrigger className={navigationMenuTriggerStyle()}>
               SHOP
             </NavigationMenuTrigger>
             <NavigationMenuContent>
-              <ul className="grid grid-cols-2 grid-rows-3 gap-4 w-[20rem] md:w-[30rem] h-[20rem]">
+              <ul className="grid grid-cols-2 grid-rows-3 gap-4 w-[20rem] md:w-[30rem] h-[8rem]">
                 <li>
                   <NavigationMenuLink asChild>
                     <Link href="#" className="text-sm leading-none font-medium">
@@ -210,15 +200,12 @@ export const NavBody = ({ className, visible }: NavBodyProps) => {
                     </Link>
                   </NavigationMenuLink>
                 </li>
-                <div className="flex flex-col gap-2 justify-center items-center row-span-3 col-start-2 row-start-1 bg-gradient-to-t from-indigo-500 from-10% via-sky-500 via-30% to-emerald-500 to-90%  p-5">
+                <div className="flex flex-col gap-2 justify-center items-center row-span-3 col-start-2 row-start-1 bg-gradient-to-t from-indigo-500 from-10% via-sky-500 via-30% to-emerald-500 to-90% p-5 rounded-2xl">
                   <h2 className="scroll-m-20 text-2xl font-semibold tracking-tight first:mt-0">
                     EXTRA SALE
                     <br />
                     <span className="text-3xl font-extrabold">30% OFF</span>
                   </h2>
-                  <RetroButton variant="secondary" size="sm">
-                    SHOP NOW <MoveRight className="ml-2" />
-                  </RetroButton>
                 </div>
               </ul>
             </NavigationMenuContent>
@@ -240,40 +227,27 @@ export const NavBody = ({ className, visible }: NavBodyProps) => {
               PAGES
             </NavigationMenuTrigger>
             <NavigationMenuContent className="w-[5rem] md:w-[10rem]">
-              <NavigationMenuLink href="#features">
-                Price by Options
-              </NavigationMenuLink>
-              <NavigationMenuLink href="#features">Shop</NavigationMenuLink>
               <NavigationMenuLink href="#features">Services</NavigationMenuLink>
-              <NavigationMenuLink href="/pricing-plans">
-                Pricing Plans
+              <NavigationMenuLink asChild>
+                <Link href="/pricing-plans">Pricing Plans</Link>
               </NavigationMenuLink>
-              <NavigationMenuLink href="#features">
-                Contact Us
+              <NavigationMenuLink asChild>
+                <Link href="/contact-us">Contact Us</Link>
               </NavigationMenuLink>
-              <NavigationMenuLink href="#features">FAQs</NavigationMenuLink>
+              <NavigationMenuLink asChild>
+                <Link href="/faqs">FAQs</Link>
+              </NavigationMenuLink>
             </NavigationMenuContent>
           </NavigationMenuItem>
         </NavigationMenuList>
       </NavigationMenu>
-      <div className="flex items-center gap-2">
-        <Button variant="ghost" size="icon" className="size-8 cursor-pointer">
-          <Search />
-        </Button>
-        <Link href="/wishlist">
-          <Button variant="ghost" size="icon" className="size-8 cursor-pointer">
-            <Star />
-          </Button>
-        </Link>
-
-        <Button variant="ghost" size="icon" className="size-8 cursor-pointer">
-          <ShoppingBasket />
-        </Button>
+      <div className="flex items-center gap-2 justify-end w-[25%]">
+        <NavIcon />
 
         <Link href="/authen">
-          <RetroButton variant="secondary" size="sm">
-            Login
-          </RetroButton>
+          <InteractiveHoverButton className="uppercase">
+            Log in
+          </InteractiveHoverButton>
         </Link>
       </div>
     </motion.div>
@@ -292,10 +266,10 @@ export const NavItems = ({ items, className, onItemClick }: NavItemsProps) => {
       )}
     >
       {items.map((item, idx) => (
-        <a
+        <Link
           onMouseEnter={() => setHovered(idx)}
           onClick={onItemClick}
-          className="relative px-4 py-2 text-neutral-600 dark:text-neutral-300"
+          className="relative px-4 py-2 text-neutral-600 dark:text-neutral-300 uppercase"
           key={`link-${idx}`}
           href={item.link}
         >
@@ -306,7 +280,7 @@ export const NavItems = ({ items, className, onItemClick }: NavItemsProps) => {
             />
           )}
           <span className="relative z-20">{item.name}</span>
-        </a>
+        </Link>
       ))}
     </motion.div>
   );
@@ -323,7 +297,7 @@ export const MobileNav = ({ children, className, visible }: MobileNavProps) => {
         width: visible ? "90%" : "100%",
         paddingRight: visible ? "12px" : "0px",
         paddingLeft: visible ? "12px" : "0px",
-        borderRadius: visible ? "4px" : "2rem",
+        borderRadius: visible ? "20px" : "2rem",
         y: visible ? 20 : 0,
       }}
       transition={{
@@ -362,7 +336,6 @@ export const MobileNavMenu = ({
   children,
   className,
   isOpen,
-  onClose,
 }: MobileNavMenuProps) => {
   return (
     <AnimatePresence>
@@ -372,7 +345,7 @@ export const MobileNavMenu = ({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           className={cn(
-            "absolute inset-x-0 top-16 z-50 flex w-full flex-col items-start justify-start gap-4 rounded-lg bg-white px-4 py-8 shadow-[0_0_24px_rgba(34,_42,_53,_0.06),_0_1px_1px_rgba(0,_0,_0,_0.05),_0_0_0_1px_rgba(34,_42,_53,_0.04),_0_0_4px_rgba(34,_42,_53,_0.08),_0_16px_68px_rgba(47,_48,_55,_0.05),_0_1px_0_rgba(255,_255,_255,_0.1)_inset] dark:bg-neutral-950",
+            "absolute inset-x-0 top-20 z-50 flex w-full flex-col items-start justify-start gap-4 rounded-lg bg-white px-4 py-8 shadow-[0_0_24px_rgba(34,_42,_53,_0.06),_0_1px_1px_rgba(0,_0,_0,_0.05),_0_0_0_1px_rgba(34,_42,_53,_0.04),_0_0_4px_rgba(34,_42,_53,_0.08),_0_16px_68px_rgba(47,_48,_55,_0.05),_0_1px_0_rgba(255,_255,_255,_0.1)_inset] dark:bg-neutral-950",
             className
           )}
         >
@@ -399,7 +372,7 @@ export const MobileNavToggle = ({
 
 export const NavbarLogo = () => {
   return (
-    <Link href="/">
+    <Link href="/" className="w-[25%]">
       <Image
         src="/assets/my-store-logo.png"
         alt="logo"

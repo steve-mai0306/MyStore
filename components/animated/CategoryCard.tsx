@@ -29,10 +29,10 @@ export const CategoryCard = ({
   imageSrc,
   altText = "Tilted card image",
   captionText = "",
-  containerHeight = "300px",
+  containerHeight = "100%",
   containerWidth = "100%",
-  imageHeight = "300px",
-  imageWidth = "300px",
+  imageHeight = "100%",
+  imageWidth = "100%",
   scaleOnHover = 1.1,
   rotateAmplitude = 14,
   showMobileWarning = true,
@@ -92,7 +92,7 @@ export const CategoryCard = ({
   return (
     <figure
       ref={ref}
-      className="relative w-full h-full [perspective:800px] flex flex-col items-center justify-center"
+      className="relative w-full [perspective:800px] flex flex-col items-center justify-center aspect-[3/4]"
       style={{
         height: containerHeight,
         width: containerWidth,

@@ -15,7 +15,7 @@ interface StyledBreadcrumbProps {
 
 export const StyledBreadcrumb = ({ route }: StyledBreadcrumbProps) => {
   return (
-    <div className="flex justify-center bg-muted py-7 mt-20 mb-10">
+    <div className="flex justify-center bg-muted py-7 mb-10">
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>

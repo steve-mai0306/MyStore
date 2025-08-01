@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/form";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { signupFormSchema, type SignupFormValues } from "@/types";
-import { RetroButton } from "@/components/animated";
+import { InteractiveHoverButton } from "@/components/magicui/interactive-hover-button";
 import { AnimatePresence, motion } from "framer-motion";
 
 export function RegisterForm({
@@ -182,9 +182,9 @@ export function RegisterForm({
                   )}
                 />
                 <div className="flex flex-col gap-3">
-                  <RetroButton type="submit" variant="secondary" size="sm">
+                  <InteractiveHoverButton type="submit">
                     Register
-                  </RetroButton>
+                  </InteractiveHoverButton>
                 </div>
               </div>
               <div className="mt-4 text-start text-sm text-muted-foreground">
