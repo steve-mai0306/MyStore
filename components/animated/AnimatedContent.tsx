@@ -86,10 +86,8 @@ export const AnimatedContent: React.FC<AnimatedContentProps> = ({
   ]);
 
   return (
-    <div className="overflow-hidden w-full">
-      <div ref={ref} className="overflow-hidden">
-        {children}
-      </div>
+    <div ref={ref} className="overflow-hidden">
+      {children}
     </div>
   );
 };
