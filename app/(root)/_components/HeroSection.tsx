@@ -2,9 +2,9 @@ import React from "react";
 import "swiper/css";
 import Link from "next/link";
 import Image from "next/image";
-import { RetroButton } from "@/components/animated";
 import { ArrowRight } from "lucide-react";
 import { BlurText } from "@/components/animated";
+import { InteractiveHoverButton } from "@/components/magicui/interactive-hover-button";
 
 interface HeroSectionProps {
   imageUrl: string;
@@ -20,17 +20,18 @@ const HeroSection: React.FC<HeroSectionProps> = ({
   withAnimation,
 }) => {
   return (
-    <div className="flex flex-col lg:flex-row items-center bg-pink-50 min-h-screen">
+    <div className="flex flex-col lg:flex-row items-center bg-pink-50 h-[88vh]">
       <div className="flex w-full lg:w-1/2 h-full">
         <Link href="/shop" className="block h-full w-full">
           {withAnimation ? (
-            <div className="h-[50vh] md:h-[60vh] lg:h-[100vh] bg-gradient-to-r from-pink-200 flex items-center justify-center">
-              <div className="relative w-full h-[50vh]">
+            <div className="h-[48vh] md:h-[50vh] lg:h-full bg-gradient-to-r from-pink-200 flex items-center justify-center">
+              <div className="relative w-full h-[40vh] md:h-[50vh] lg:h-[60vh]">
                 <div className="absolute top-10 left-[40%] rotate-[5deg] z-10 w-[120px] h-[120px] md:w-[200px] md:h-[250px] lg:w-[250px] lg:h-[300px] animate-in slide-in-from-top-full fade-in duration-700">
                   <Image
                     src="/assets/about-us-banner.jpg"
                     alt=""
                     fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     className="rounded-xl shadow-lg"
                   />
                 </div>
@@ -40,6 +41,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                     src="/assets/about-us-banner-2.jpg"
                     alt=""
                     fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     className="rounded-xl shadow-lg border-2 border-white"
                   />
                 </div>
@@ -49,6 +51,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                     src="/assets/about-us-banner-3.png"
                     alt=""
                     fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     className=""
                   />
                 </div>
@@ -58,6 +61,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                     src="/assets/about-us-banner-2.jpg"
                     alt=""
                     fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     className="rounded-xl shadow-lg border-2 border-white"
                   />
                 </div>
@@ -90,9 +94,9 @@ const HeroSection: React.FC<HeroSectionProps> = ({
             />
           </h1>
           <p className="text-lg mb-6">{subTitle}</p>
-          <RetroButton size="md" variant="secondary">
-            Shop Now <ArrowRight className="ml-2" />
-          </RetroButton>
+          <InteractiveHoverButton className="uppercase" icon={<ArrowRight />}>
+            Shop now
+          </InteractiveHoverButton>
         </div>
       </div>
     </div>

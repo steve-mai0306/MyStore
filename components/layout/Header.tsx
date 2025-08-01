@@ -10,34 +10,42 @@ import {
   MobileNavHeader,
   MobileNavToggle,
   MobileNavMenu,
-  RetroButton,
 } from "../animated";
+import { InteractiveHoverButton } from "../magicui/interactive-hover-button";
 import Link from "next/link";
 
 export function Header() {
   const navItems = [
     {
-      name: "FEATURES",
+      name: "About Us",
       link: "#features",
     },
     {
-      name: "PRICING",
+      name: "Pricing Plans",
       link: "#pricing",
     },
     {
-      name: "SHOP",
+      name: "Shop",
       link: "#shop",
     },
     {
-      name: "BLOG",
+      name: "Blog",
       link: "#blog",
+    },
+    {
+      name: "Contact Us",
+      link: "#contact",
+    },
+    {
+      name: "FAQs",
+      link: "#faqs",
     },
   ];
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <div className="relative w-full">
+    <>
       <Navbar>
         {/* Desktop Navigation */}
         <NavBody>
@@ -64,34 +72,23 @@ export function Header() {
                 key={`mobile-link-${idx}`}
                 href={item.link}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="relative text-neutral-600 dark:text-neutral-300"
+                className="relative text-neutral-600 dark:text-neutral-300 uppercase"
               >
                 <span className="block">{item.name}</span>
               </Link>
             ))}
             <div className="flex w-full flex-col gap-4">
-              <RetroButton
+              <InteractiveHoverButton
                 onClick={() => setIsMobileMenuOpen(false)}
-                variant="outline"
-                size="sm"
-                className="w-full"
               >
                 Login
-              </RetroButton>
-              <RetroButton
-                onClick={() => setIsMobileMenuOpen(false)}
-                variant="outline"
-                size="sm"
-                className="w-full"
-              >
-                Book a call
-              </RetroButton>
+              </InteractiveHoverButton>
             </div>
           </MobileNavMenu>
         </MobileNav>
       </Navbar>
 
       {/* Navbar */}
-    </div>
+    </>
   );
 }

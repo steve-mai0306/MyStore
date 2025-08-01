@@ -1,5 +1,4 @@
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -9,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { RetroButton } from "@/components/animated";
+import { InteractiveHoverButton } from "@/components/magicui/interactive-hover-button";
 
 export function LoginForm({
   className,
@@ -49,12 +48,12 @@ export function LoginForm({
                 <Input id="password" type="password" required />
               </div>
               <div className="flex flex-col gap-3">
-                <RetroButton type="submit" size="sm" variant="secondary">
+                <InteractiveHoverButton type="submit">
                   Login
-                </RetroButton>
-                <RetroButton variant="default" size="sm">
+                </InteractiveHoverButton>
+                <InteractiveHoverButton>
                   Login with Google
-                </RetroButton>
+                </InteractiveHoverButton>
               </div>
             </div>
           </form>

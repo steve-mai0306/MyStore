@@ -1,11 +1,11 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Pricing Plans • My Store",
-  description: "Pricing Plans",
+  title: "Contact Us • My Store",
+  description: "Contact Us • My Store",
 };
 
-export default function PricingPlansLayout({
+export default function ContactUsLayout({
   children,
 }: {
   children: React.ReactNode;
