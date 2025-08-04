@@ -7,3 +7,5 @@ export * from "./Mansory";
 export * from "./CountUp";
 export * from "./MagicBento";
 export * from "./Network";
+export * from "./CurvedLoop";
+export * from "./AnimatedCarousel";

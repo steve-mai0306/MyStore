@@ -142,7 +142,7 @@ export const PricingPlan = () => {
       <div className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-rose-500 rounded-full mix-blend-multiply filter blur-xl opacity-5 dark:opacity-10 animate-blob animation-delay-4000 pointer-events-none"></div>
 
       {/* Your Content/Components - This is the existing pricing page content */}
-      <div className="relative z-10 flex items-center justify-center min-h-screen">
+      <div className="relative z-10 flex items-start justify-center min-h-screen">
         <div className="w-full">
           <div className="text-center">
             <h2 className="text-2xl lg:text-5xl my-3 text-center font-bold tracking-wide">

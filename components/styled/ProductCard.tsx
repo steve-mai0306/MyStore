@@ -3,8 +3,17 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
-import { Heart, Eye, ShoppingCart, RotateCcw } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Star, Eye, ShoppingCart, RotateCcw } from "lucide-react";
+import { Button } from "../ui";
+import { Dock, DockIcon } from "@/components/magicui/dock";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
+
 
 export const ProductCard = () => {
   const [isHovered, setIsHovered] = useState(false);
@@ -58,35 +67,79 @@ export const ProductCard = () => {
             isHovered ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
           }`}
         >
-          <div className="flex items-center gap-2 bg-white/90 backdrop-blur-sm rounded-full px-3 py-2 shadow-lg">
-            <Button
-              size="sm"
-              variant="ghost"
-              className="h-8 w-8 p-0 hover:bg-gray-100"
-            >
-              <Heart className="h-4 w-4" />
-            </Button>
-            <Button
-              size="sm"
-              variant="ghost"
-              className="h-8 w-8 p-0 hover:bg-gray-100"
-            >
-              <Eye className="h-4 w-4" />
-            </Button>
-            <Button
-              size="sm"
-              variant="ghost"
-              className="h-8 w-8 p-0 hover:bg-gray-100"
-            >
-              <ShoppingCart className="h-4 w-4" />
-            </Button>
-            <Button
-              size="sm"
-              variant="ghost"
-              className="h-8 w-8 p-0 hover:bg-gray-100"
-            >
-              <RotateCcw className="h-4 w-4" />
-            </Button>
+          <div className="relative">
+            <TooltipProvider>
+              <Dock direction="middle" iconMagnification={50}>
+                <DockIcon>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        aria-label="Add to whistlist"
+                        variant="ghost"
+                        size="icon"
+                        className="rounded-full size-8 cursor-pointer"
+                      >
+                        <Star />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Add to wishlist</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </DockIcon>
+                <DockIcon>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        aria-label="Quick view"
+                        variant="ghost"
+                        size="icon"
+                        className="rounded-full size-8 cursor-pointer"
+                      >
+                        <Eye />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Quick view</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </DockIcon>
+                <DockIcon>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        aria-label="Add to cart"
+                        variant="ghost"
+                        size="icon"
+                        className="rounded-full size-8 cursor-pointer"
+                      >
+                        <ShoppingCart />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Add to cart</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </DockIcon>
+                <DockIcon>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        aria-label="Compare"
+                        variant="ghost"
+                        size="icon"
+                        className="rounded-full size-8 cursor-pointer"
+                      >
+                        <RotateCcw />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Compare</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </DockIcon>
+              </Dock>
+            </TooltipProvider>
           </div>
         </div>
       </div>
