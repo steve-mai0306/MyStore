@@ -4,7 +4,12 @@ import React from "react";
 import { SwiperCarousel } from "./_components";
 import { Container } from "@/components/layout";
 import { InteractiveHoverButton } from "@/components/magicui/interactive-hover-button";
-import { CategoryCard, RetroButton } from "@/components/animated";
+import {
+  CategoryCard,
+  RetroButton,
+  CurvedLoop,
+  AnimatedCarousel,
+} from "@/components/animated";
 import { FeatureCard, ProductListSection } from "./_components";
 import {
   Globe,
@@ -17,6 +22,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { BoxReveal } from "@/components/magicui/box-reveal";
+import { FeedbackMarquee } from "./_components";
 
 export default function Home() {
   return (
@@ -209,13 +215,67 @@ export default function Home() {
       <section className="top-sale-products py-20">
         <Container>
           <div className="flex flex-row items-center justify-between">
-            <h2 className="text-2xl lg:text-5xl">WHAT&apos;S HOT?</h2>
-            <RetroButton variant="link">
-              VIEW ALL <ArrowRight className="ml-2" />
+            <h2 className="text-2xl lg:text-5xl uppercase">What&apos;s hot?</h2>
+            <RetroButton variant="link" className="uppercase">
+              View all <ArrowRight className="ml-2" />
             </RetroButton>
           </div>
           <ProductListSection />
         </Container>
+      </section>
+
+      <section className="curved-loop-section bg-muted">
+        <CurvedLoop
+          marqueeText="MyStore ✦ Creative ✦ Accessible ✦ Affordable Products ✦ Morden ✦"
+          speed={1}
+          curveAmount={0}
+          interactive={false}
+          className=""
+        />
+      </section>
+      <section className="extra-sale-section py-20">
+        <Container>
+          <div className="flex flex-col md:flex-row items-center gap-4">
+            <div className="image-attachment align-middle w-full flex items-center justify-center  md:w-1/2 relative">
+              <Image
+                src="/assets/home-banner-4.jpg"
+                alt="banner"
+                width={660}
+                height={880}
+                className="w-full h-auto object-cover md:pr-5"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              />
+              <InteractiveHoverButton
+                className="uppercase absolute bottom-10 w-xs"
+                icon={<ArrowRight />}
+              >
+                Contact us
+              </InteractiveHoverButton>
+            </div>
+
+            <div className="flex flex-col justify-start items-center w-full  md:w-1/2">
+              <h2 className="text-2xl lg:text-4xl uppercase mb-6">
+                Extra sale 30% off
+              </h2>
+              <span className="mt-[-2%] px-[16%] pb-[3%] pt-0 text-center">
+                <h2>
+                  What’s more, we do it right! A full administration printing
+                  background.
+                </h2>
+              </span>
+              <div className="flex flex-row w-full">
+                <AnimatedCarousel />
+              </div>
+            </div>
+          </div>
+        </Container>
+      </section>
+
+      <section className="feedback-marquee-section py-20">
+        <h2 className="text-2xl lg:text-4xl uppercase mb-6 text-center">
+          See what our happy clients share about
+        </h2>
+        <FeedbackMarquee />
       </section>
     </>
   );

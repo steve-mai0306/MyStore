@@ -19,6 +19,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "printspace.harutheme.com",
       },
+      {
+        protocol: "https",
+        hostname: "avatar.vercel.sh",
+      },
     ],
   },
 };
