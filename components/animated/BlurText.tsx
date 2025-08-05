@@ -96,7 +96,7 @@ export const BlurText: React.FC<BlurTextProps> = ({
   );
 
   return (
-    <p ref={ref} className={`blur-text ${className} flex flex-wrap`}>
+    <p ref={ref} className={`blur-text ${className} flex flex-wrap text-2xl md:text-6xl`}>
       {elements.map((segment, index) => {
         const animateKeyframes = buildKeyframes(fromSnapshot, toSnapshots);
 

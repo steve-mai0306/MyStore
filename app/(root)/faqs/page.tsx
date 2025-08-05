@@ -65,14 +65,20 @@ export default function FAQsPage() {
                   height={600}
                 />
               </AnimatedContent>
-              <Image
-                src="/assets/about-us-banner-2.jpg"
-                alt=""
-                width={250}
-                height={250}
-                className="rounded-2xl absolute rotate-[10deg] left-0 bottom-30 border-blue-500 border-2 animate-in fade-in duration-1000"
-              />
-              <div className="absolute z-10 bottom-0 right-10 p-5 border-2 rounded-2xl bg-muted border-pink-500 rotate-[-10deg] uppercase text-4xl text-center animate-in fade-in duration-1000">
+              <div
+                className="rounded-2xl absolute rotate-[10deg] left-0 bottom-10 sm:bottom-30 border-blue-500 border-2 animate-in fade-in duration-1000
+    w-[140px] h-[200px] sm:w-[220px] sm:h-[250px] xs:left-2 xs:bottom-10 xs:border xs:p-1"
+              >
+                <Image
+                  src="/assets/about-us-banner-2.jpg"
+                  alt=""
+                  fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  className="rounded-2xl"
+                />
+              </div>
+
+              <div className="absolute z-10 bottom-0 right-10 p-5 border-2 rounded-2xl bg-muted border-pink-500 rotate-[-10deg] uppercase text-xl sm:text-4xl text-center animate-in fade-in duration-1000">
                 Frequently <br></br> asked <br></br> questions{" "}
               </div>
             </div>

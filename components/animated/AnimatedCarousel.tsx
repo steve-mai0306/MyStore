@@ -250,7 +250,7 @@ function Card({ index, activeIndex, totalCards }: CardProps) {
       animate={animate}
       initial={false}
     >
-      <div className="relative w-full h-fit rounded-3xl shadow-2xl overflow-hidden bg-muted dark:bg-neutral-800">
+      <div className="relative w-full h-fit overflow-hidden bg-muted dark:bg-neutral-800">
         <ProductCard />
       </div>
     </motion.div>
