@@ -34,7 +34,7 @@ export default function Home() {
       <section className="product-category-section pt-20">
         <Container>
           <div className="flex flex-col lg:flex-row items-start lg:items-center w-full justify-between">
-            <h2 className="text-2xl lg:text-5xl mb-6 w-[40%]">
+            <h2 className="text-2xl lg:text-5xl mb-6 w-[40%] font-bold">
               FIND A FIT <br></br> FOR EVERYONE
             </h2>
             <div className="category-tag-list flex flex-wrap justify-start lg:justify-end gap-4 w-[70%]">
@@ -215,7 +215,9 @@ export default function Home() {
       <section className="top-sale-products py-20">
         <Container>
           <div className="flex flex-row items-center justify-between">
-            <h2 className="text-2xl lg:text-5xl uppercase">What&apos;s hot?</h2>
+            <h2 className="text-2xl lg:text-5xl uppercase font-bold">
+              What&apos;s hot?
+            </h2>
             <RetroButton variant="link" className="uppercase">
               View all <ArrowRight className="ml-2" />
             </RetroButton>
@@ -249,12 +251,12 @@ export default function Home() {
                 className="uppercase absolute bottom-10 w-xs"
                 icon={<ArrowRight />}
               >
-                Contact us
+                Shop now
               </InteractiveHoverButton>
             </div>
 
             <div className="flex flex-col justify-start items-center w-full  md:w-1/2">
-              <h2 className="text-2xl lg:text-4xl uppercase mb-6">
+              <h2 className="text-2xl lg:text-4xl uppercase mb-6 font-bold">
                 Extra sale 30% off
               </h2>
               <span className="mt-[-2%] px-[16%] pb-[3%] pt-0 text-center">
@@ -272,10 +274,65 @@ export default function Home() {
       </section>
 
       <section className="feedback-marquee-section py-20">
-        <h2 className="text-2xl lg:text-4xl uppercase mb-6 text-center">
+        <h2 className="text-2xl lg:text-4xl uppercase mb-6 text-center font-bold">
           See what our happy clients share about
         </h2>
         <FeedbackMarquee />
+      </section>
+
+      <section className="more-discover-section pb-20">
+        <Container>
+          <h2 className="text-2xl lg:text-4xl uppercase mb-6 text-center font-bold">
+            More to discover
+          </h2>
+          <div className="flex flex-col md:flex-row w-full gap-2 justify-between">
+            <div className="group/image flex relative w-full h-100 md:h-100 justify-center items-center overflow-hidden">
+              <Image
+                src="/assets/sell-with-us-img.png"
+                alt="banner"
+                fill
+                className="object-cover transition duration-700 group-hover/image:scale-110"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              />
+              <InteractiveHoverButton
+                className="uppercase absolute bottom-10 w-xs text-center"
+                icon={<ArrowRight />}
+              >
+                Sell with us
+              </InteractiveHoverButton>
+            </div>
+            <div className="group/image flex relative w-full h-100 md:h-100 justify-center items-center overflow-hidden">
+              <Image
+                src="/assets/about-us-banner-5.jpg"
+                alt="banner"
+                fill
+                className="object-cover transition duration-700 group-hover/image:scale-110"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              />
+              <InteractiveHoverButton
+                className="uppercase absolute bottom-10 w-xs text-center"
+                icon={<ArrowRight />}
+              >
+                Blog update
+              </InteractiveHoverButton>
+            </div>
+            <div className="group/image flex relative w-full h-100 md:h-100 justify-center items-center overflow-hidden">
+              <Image
+                src="/assets/home-banner-5.jpg"
+                alt="banner"
+                fill
+                className="object-cover transition duration-700 group-hover/image:scale-110"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              />
+              <InteractiveHoverButton
+                className="uppercase absolute bottom-10 w-xs text-center"
+                icon={<ArrowRight />}
+              >
+                Reviews
+              </InteractiveHoverButton>
+            </div>
+          </div>
+        </Container>
       </section>
     </>
   );

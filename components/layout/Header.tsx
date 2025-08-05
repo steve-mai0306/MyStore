@@ -18,11 +18,11 @@ export function Header() {
   const navItems = [
     {
       name: "About Us",
-      link: "#features",
+      link: "/about-us",
     },
     {
       name: "Pricing Plans",
-      link: "#pricing",
+      link: "/pricing-plans",
     },
     {
       name: "Shop",
@@ -34,11 +34,11 @@ export function Header() {
     },
     {
       name: "Contact Us",
-      link: "#contact",
+      link: "/contact-us",
     },
     {
       name: "FAQs",
-      link: "#faqs",
+      link: "/faqs",
     },
   ];
 
