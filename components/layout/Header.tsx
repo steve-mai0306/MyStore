@@ -13,8 +13,29 @@ import {
 } from "../animated";
 import { InteractiveHoverButton } from "../magicui/interactive-hover-button";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
-export function Header() {
+interface HeaderProps {
+  hiddenAt?: string;
+}
+
+export function Header({ hiddenAt }: HeaderProps) {
+  const pathname = usePathname();
+
+  const normalizePath = (path?: string) => {
+    if (!path) return "/";
+    return path === "/" ? "/" : path.replace(/\/+$/, "");
+  };
+
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const shouldHide =
+    Boolean(hiddenAt) && normalizePath(pathname) === normalizePath(hiddenAt);
+
+  if (shouldHide) {
+    return null;
+  }
+
   const navItems = [
     {
       name: "About Us",
@@ -41,8 +62,6 @@ export function Header() {
       link: "/faqs",
     },
   ];
-
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
     <>

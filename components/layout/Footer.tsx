@@ -3,8 +3,26 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { InteractiveHoverButton } from "../magicui/interactive-hover-button";
+import { usePathname } from "next/navigation";
 
-export const Footer = () => {
+interface FooterProps {
+  hiddenAt?: string;
+}
+
+export const Footer = ({ hiddenAt }: FooterProps) => {
+  const pathname = usePathname();
+
+  const normalizePath = (path?: string) => {
+    if (!path) return "/";
+    return path === "/" ? "/" : path.replace(/\/+$/, "");
+  };
+
+  const shouldHide =
+    Boolean(hiddenAt) && normalizePath(pathname) === normalizePath(hiddenAt);
+
+  if (shouldHide) {
+    return null;
+  }
   const footerLinks = {
     pagedone: [
       { name: "Home", href: "#" },

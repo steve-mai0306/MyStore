@@ -166,7 +166,7 @@ export function AnimatedCarousel() {
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
       >
-        <div className="relative flex w-full flex-col rounded-3xl border border-white/10 dark:border-white/10 bg-white dark:bg-neutral-900  pt-6">
+        <div className="relative flex w-full flex-col rounded-3xl border border-white/10 dark:border-white/10 dark:bg-neutral-900 pt-6">
           <div className="relative w-full h-[30rem] md:h-[55vh] flex items-center justify-center overflow-hidden pt-12">
             <motion.div
               className="w-full h-full flex items-center justify-center"
