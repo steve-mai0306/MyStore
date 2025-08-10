@@ -9,6 +9,8 @@ import {
   RetroButton,
   CurvedLoop,
   AnimatedCarousel,
+  AnimatedContent,
+  MagicBento,
 } from "@/components/animated";
 import { FeatureCard, ProductListSection } from "./_components";
 import {
@@ -34,7 +36,7 @@ export default function Home() {
       <section className="product-category-section pt-20">
         <Container>
           <div className="flex flex-col lg:flex-row items-start lg:items-center w-full justify-between">
-            <h2 className="text-2xl lg:text-5xl mb-6 w-[40%] font-bold">
+            <h2 className="text-2xl lg:text-5xl mb-6 w-[40%] font-bold tracking-wide">
               FIND A FIT <br></br> FOR EVERYONE
             </h2>
             <div className="category-tag-list flex flex-wrap justify-start lg:justify-end gap-4 w-[70%]">
@@ -215,7 +217,7 @@ export default function Home() {
       <section className="top-sale-products py-20">
         <Container>
           <div className="flex flex-row items-center justify-between">
-            <h2 className="text-2xl lg:text-5xl uppercase font-bold">
+            <h2 className="text-2xl lg:text-5xl uppercase font-bold  tracking-wide">
               What&apos;s hot?
             </h2>
             <RetroButton variant="link" className="uppercase">
@@ -256,7 +258,7 @@ export default function Home() {
             </div>
 
             <div className="flex flex-col justify-start items-center w-full  md:w-1/2">
-              <h2 className="text-2xl lg:text-4xl uppercase mb-6 font-bold">
+              <h2 className="text-2xl lg:text-4xl uppercase mb-6 font-bold  tracking-wide">
                 Extra sale 30% off
               </h2>
               <span className="mt-[-2%] px-[16%] pb-[3%] pt-0 text-center">
@@ -274,7 +276,7 @@ export default function Home() {
       </section>
 
       <section className="feedback-marquee-section py-20">
-        <h2 className="text-2xl lg:text-4xl uppercase mb-6 text-center font-bold">
+        <h2 className="text-2xl lg:text-4xl uppercase mb-6 text-center font-bold  tracking-wide">
           See what our happy clients share about
         </h2>
         <FeedbackMarquee />
@@ -282,7 +284,7 @@ export default function Home() {
 
       <section className="more-discover-section pb-20">
         <Container>
-          <h2 className="text-2xl lg:text-4xl uppercase mb-6 text-center font-bold">
+          <h2 className="text-2xl lg:text-4xl uppercase mb-6 text-center font-bold tracking-wide">
             More to discover
           </h2>
           <div className="flex flex-col md:flex-row w-full gap-2 justify-between">
@@ -332,6 +334,40 @@ export default function Home() {
               </InteractiveHoverButton>
             </div>
           </div>
+        </Container>
+      </section>
+
+      <section className="spotlight-section pb-20">
+        <Container>
+          <h2 className="text-2xl lg:text-4xl mb-6 text-center font-bold uppercase tracking-wide">
+            What make us different?
+          </h2>
+          <AnimatedContent
+            distance={150}
+            direction="vertical"
+            reverse={false}
+            duration={1}
+            ease="power3.out"
+            initialOpacity={0}
+            animateOpacity
+            scale={1}
+            threshold={0.2}
+            delay={0.3}
+          >
+            <MagicBento
+              textAutoHide={true}
+              enableStars={true}
+              enableSpotlight={true}
+              enableBorderGlow={true}
+              enableTilt={true}
+              enableMagnetism={true}
+              disableAnimations
+              clickEffect={false}
+              spotlightRadius={300}
+              particleCount={12}
+              glowColor="132, 0, 255"
+            />
+          </AnimatedContent>
         </Container>
       </section>
     </>

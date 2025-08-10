@@ -9,3 +9,4 @@ export * from "./MagicBento";
 export * from "./Network";
 export * from "./CurvedLoop";
 export * from "./AnimatedCarousel";
+export * from "./GalaxyBg";

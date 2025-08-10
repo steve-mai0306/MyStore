@@ -21,8 +21,20 @@ export const loginFormSchema = z.object({
     }),
 });
 
-export const signupFormSchema = z
-  .object({
+export const signupFormSchema = z.discriminatedUnion("type", [
+  z.object({
+    email: z
+      .string()
+      .min(1, { message: "Email is required" })
+      .email({ message: "Please enter a valid email address" }),
+    type: z.literal("customer"),
+  }),
+  z.object({
+    email: z
+      .string()
+      .min(1, { message: "Email is required" })
+      .email({ message: "Please enter a valid email address" }),
+    type: z.literal("vendor"),
     firstName: z
       .string()
       .min(1, { message: "First name is required" })
@@ -39,12 +51,34 @@ export const signupFormSchema = z
       .string()
       .min(1, { message: "Phone number is required" })
       .regex(/^\d{10}$/, { message: "Phone number must be 10 digits" }),
-    email: z
+  }),
+]);
+
+export const createPasswordForm = z
+  .object({
+    password: z
       .string()
-      .min(1, { message: "Email is required" })
-      .email({ message: "Please enter a valid email address" }),
-    type: z.enum(["customer", "vendor"]).describe("You need to select a type."),
+      .min(1, { message: "Password is required" })
+      .min(8, { message: "Password must be at least 8 characters" })
+      .regex(/[A-Z]/, {
+        message: "Password must contain at least one uppercase letter",
+      })
+      .regex(/[a-z]/, {
+        message: "Password must contain at least one lowercase letter",
+      })
+      .regex(/[0-9]/, { message: "Password must contain at least one number" })
+      .regex(/[^A-Za-z0-9]/, {
+        message: "Password must contain at least one special character",
+      }),
+    confirmPassword: z
+      .string()
+      .min(1, { message: "Confirm password is required" }),
   })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
 
 export type LoginFormValues = z.infer<typeof loginFormSchema>;
 export type SignupFormValues = z.infer<typeof signupFormSchema>;
+export type CreatePasswordFormValues = z.infer<typeof createPasswordForm>;

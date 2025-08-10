@@ -29,25 +29,30 @@ export function RegisterForm({
   ...props
 }: React.ComponentProps<"div">) {
   const [registrationType, setRegistrationType] = useState<string>("");
-  const form = useForm<SignupFormValues>({
+  const form = useForm({
     resolver: zodResolver(signupFormSchema),
     defaultValues: {
       email: "",
-      firstName: "",
-      lastName: "",
-      shopName: "",
-      phoneNumber: "",
-      type: "customer",
+      type: "customer" as const,
     },
   });
-  const onSubmit = (data: SignupFormValues) => {
-    console.log("Form submitted with data:", data);
+  const onSubmit = (data: any) => {
+    // Remove type field from submission data
+    const { type, ...submissionData } = data;
+    console.log("Form submitted with data:", submissionData);
     // Handle form submission logic here, e.g., API call
   };
 
   const handleTypeChange = (value: "customer" | "vendor") => {
     setRegistrationType(value);
     form.setValue("type", value);
+
+    if (value === "customer") {
+      form.unregister("firstName");
+      form.unregister("lastName");
+      form.unregister("shopName");
+      form.unregister("phoneNumber");
+    }
   };
 
   return (
