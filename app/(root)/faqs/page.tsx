@@ -5,7 +5,6 @@ import { StyledBreadcrumb } from "@/components/styled";
 import { Container } from "@/components/layout";
 import { AnimatedContent } from "@/components/animated";
 import Accordion from "@/components/ui/accordion";
-import { InteractiveHoverButton } from "@/components/magicui/interactive-hover-button";
 import { Newsletter } from "../_components";
 
 const faqData = [

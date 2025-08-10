@@ -10,7 +10,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -90,7 +89,10 @@ export default function ContactUsPage() {
                   Send a message
                 </h2>
                 <Form {...form}>
-                  <form className="contact-form flex flex-col gap-4">
+                  <form
+                    className="contact-form flex flex-col gap-4"
+                    onSubmit={form.handleSubmit(onSubmit)}
+                  >
                     <div className="flex flex-row gap-4 pt-5">
                       <div className="w-1/2">
                         <FormField
@@ -160,14 +162,21 @@ export default function ContactUsPage() {
                         <FormItem>
                           <FormLabel>Subject</FormLabel>
                           <FormControl>
-                            <Textarea {...field} placeholder="" required className="h-60" />
+                            <Textarea
+                              {...field}
+                              placeholder=""
+                              required
+                              className="h-60"
+                            />
                           </FormControl>
 
                           <FormMessage />
                         </FormItem>
                       )}
                     />
-                    <InteractiveHoverButton type="submit" className="uppercase">Submit</InteractiveHoverButton>
+                    <InteractiveHoverButton type="submit" className="uppercase">
+                      Submit
+                    </InteractiveHoverButton>
                   </form>
                 </Form>
               </div>

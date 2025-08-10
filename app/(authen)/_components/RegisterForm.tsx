@@ -29,14 +29,15 @@ export function RegisterForm({
   ...props
 }: React.ComponentProps<"div">) {
   const [registrationType, setRegistrationType] = useState<string>("");
-  const form = useForm({
+  const form = useForm<SignupFormValues>({
     resolver: zodResolver(signupFormSchema),
     defaultValues: {
       email: "",
       type: "customer" as const,
     },
+    shouldUnregister: true,
   });
-  const onSubmit = (data: any) => {
+  const onSubmit = (data: SignupFormValues) => {
     // Remove type field from submission data
     const { type, ...submissionData } = data;
     console.log("Form submitted with data:", submissionData);
@@ -75,6 +76,7 @@ export function RegisterForm({
                       <FormControl>
                         <Input
                           {...field}
+                          value={field.value ?? ""}
                           type="email"
                           placeholder="youremail@email.com"
                           required
@@ -105,7 +107,7 @@ export function RegisterForm({
                           <FormItem>
                             <FormLabel>First Name</FormLabel>
                             <FormControl>
-                              <Input {...field} required />
+                              <Input {...field} value={field.value ?? ""} required />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -118,7 +120,7 @@ export function RegisterForm({
                           <FormItem>
                             <FormLabel>Last Name</FormLabel>
                             <FormControl>
-                              <Input {...field} required />
+                              <Input {...field} value={field.value ?? ""} required />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -131,7 +133,7 @@ export function RegisterForm({
                           <FormItem>
                             <FormLabel>Shop Name</FormLabel>
                             <FormControl>
-                              <Input {...field} required />
+                              <Input {...field} value={field.value ?? ""} required />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -144,7 +146,7 @@ export function RegisterForm({
                           <FormItem>
                             <FormLabel>Phone Number</FormLabel>
                             <FormControl>
-                              <Input {...field} type="tel" required />
+                              <Input {...field} value={field.value ?? ""} type="tel" required />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
