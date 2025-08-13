@@ -9,11 +9,38 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { InteractiveHoverButton } from "@/components/magicui/interactive-hover-button";
+import { useForm } from "react-hook-form";
+import * as React from "react";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const { register, handleSubmit } = useForm<{
+    email: string;
+    password: string;
+  }>();
+  const [loading, setLoading] = React.useState(false);
+  const router = useRouter();
+  const onSubmit = async (data: { email: string; password: string }) => {
+    try {
+      setLoading(true);
+      const res = await signIn("credentials", {
+        redirect: false,
+        email: data.email,
+        password: data.password,
+      });
+      if (res?.error) {
+        console.log("error login", res.error);
+      } else {
+        router.push("/"); // or dashboard
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="rounded-none">
@@ -24,7 +51,7 @@ export function LoginForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-6">
               <div className="grid gap-3">
                 <Label htmlFor="email">Email</Label>
@@ -33,6 +60,7 @@ export function LoginForm({
                   type="email"
                   placeholder="m@example.com"
                   required
+                  {...register("email", { required: true })}
                 />
               </div>
               <div className="grid gap-3">
@@ -45,10 +73,15 @@ export function LoginForm({
                     Forgot your password?
                   </a>
                 </div>
-                <Input id="password" type="password" required />
+                <Input
+                  id="password"
+                  type="password"
+                  required
+                  {...register("password", { required: true })}
+                />
               </div>
               <div className="flex flex-col gap-3">
-                <InteractiveHoverButton type="submit">
+                <InteractiveHoverButton type="submit" loading={loading}>
                   Login
                 </InteractiveHoverButton>
                 <InteractiveHoverButton>

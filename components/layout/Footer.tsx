@@ -132,7 +132,7 @@ export const Footer = ({ hiddenAt }: FooterProps) => {
     <footer className="w-full bg-white dark:bg-black">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-8 py-10 max-sm:max-w-sm max-sm:mx-auto gap-y-8">
-          <div className="col-span-full mb-10 lg:col-span-2 lg:mb-0">
+          <div className="col-span-full mb-10 lg:col-span-2 lg:mb-0 text-center lg:text-left">
             <Link href="#" className="flex justify-center lg:justify-start">
               <Image
                 src="/assets/my-store-logo.png"

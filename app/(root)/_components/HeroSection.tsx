@@ -84,7 +84,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
         </Link>
       </div>
       <div className="flex flex-col justify-start sm:justify-center items-center w-full lg:w-1/2 min-h-[40vh] ">
-        <div className=" flex flex-col items-start px-10 ">
+        <div className=" flex flex-col items-start px-10">
           <h1 className="text-5xl font-semibold my-4">
             <BlurText
               text={title}
