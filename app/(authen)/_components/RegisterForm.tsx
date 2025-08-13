@@ -23,6 +23,9 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { signupFormSchema, type SignupFormValues } from "@/types";
 import { InteractiveHoverButton } from "@/components/magicui/interactive-hover-button";
 import { AnimatePresence, motion } from "framer-motion";
+import { useRegisterCustomer, useRegisterVendor } from "@/queries/mutation";
+import { useAuthStore } from "../store/useAuthStore";
+
 
 export function RegisterForm({
   className,
@@ -37,11 +40,37 @@ export function RegisterForm({
     },
     shouldUnregister: true,
   });
+
+  const registerMutation = useRegisterCustomer();
+  const registerVendorMutation = useRegisterVendor();
+  const { setCustomerRegistered, setVendorRegistered } = useAuthStore();
+
   const onSubmit = (data: SignupFormValues) => {
-    // Remove type field from submission data
-    const { type, ...submissionData } = data;
-    console.log("Form submitted with data:", submissionData);
-    // Handle form submission logic here, e.g., API call
+    if (data.type === "customer") {
+      registerMutation.mutate(
+        { email: data.email },
+        {
+          onSuccess: () => {
+            setCustomerRegistered(true);
+          },
+        }
+      );
+    } else {
+      registerVendorMutation.mutate(
+        {
+          email: data.email,
+          firstName: data.firstName,
+          lastName: data.lastName,
+          shopName: data.shopName,
+          phoneNumber: data.phoneNumber,
+        },
+        {
+          onSuccess: () => {
+            setVendorRegistered(true);
+          },
+        }
+      );
+    }
   };
 
   const handleTypeChange = (value: "customer" | "vendor") => {
@@ -107,7 +136,11 @@ export function RegisterForm({
                           <FormItem>
                             <FormLabel>First Name</FormLabel>
                             <FormControl>
-                              <Input {...field} value={field.value ?? ""} required />
+                              <Input
+                                {...field}
+                                value={field.value ?? ""}
+                                required
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -120,7 +153,11 @@ export function RegisterForm({
                           <FormItem>
                             <FormLabel>Last Name</FormLabel>
                             <FormControl>
-                              <Input {...field} value={field.value ?? ""} required />
+                              <Input
+                                {...field}
+                                value={field.value ?? ""}
+                                required
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -133,7 +170,11 @@ export function RegisterForm({
                           <FormItem>
                             <FormLabel>Shop Name</FormLabel>
                             <FormControl>
-                              <Input {...field} value={field.value ?? ""} required />
+                              <Input
+                                {...field}
+                                value={field.value ?? ""}
+                                required
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -146,7 +187,12 @@ export function RegisterForm({
                           <FormItem>
                             <FormLabel>Phone Number</FormLabel>
                             <FormControl>
-                              <Input {...field} value={field.value ?? ""} type="tel" required />
+                              <Input
+                                {...field}
+                                value={field.value ?? ""}
+                                type="tel"
+                                required
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -189,7 +235,14 @@ export function RegisterForm({
                   )}
                 />
                 <div className="flex flex-col gap-3">
-                  <InteractiveHoverButton type="submit">
+                  <InteractiveHoverButton
+                    type="submit"
+                    loading={
+                      registerMutation.isPending ||
+                      registerVendorMutation.isPending
+                    }
+                    loadingText="Registering..."
+                  >
                     Register
                   </InteractiveHoverButton>
                 </div>

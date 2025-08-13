@@ -167,7 +167,7 @@ export function AnimatedCarousel() {
         onMouseLeave={() => setIsPaused(false)}
       >
         <div className="relative flex w-full flex-col rounded-3xl border border-white/10 dark:border-white/10 dark:bg-neutral-900 pt-6">
-          <div className="relative w-full h-[30rem] md:h-[55vh] flex items-center justify-center overflow-hidden pt-12">
+          <div className="relative w-full h-[40rem] md:h-[70vh] flex items-center justify-center overflow-hidden pt-12">
             <motion.div
               className="w-full h-full flex items-center justify-center"
               drag="x"
@@ -243,7 +243,7 @@ function Card({ index, activeIndex, totalCards }: CardProps) {
 
   return (
     <motion.div
-      className="absolute w-full md:w-1/2 h-full"
+      className="absolute w-full md:w-1/2"
       style={{
         transformStyle: "preserve-3d",
       }}

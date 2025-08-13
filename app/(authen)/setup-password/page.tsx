@@ -17,8 +17,17 @@ import { createPasswordForm, type CreatePasswordFormValues } from "@/types";
 import { InteractiveHoverButton } from "@/components/magicui/interactive-hover-button";
 import Link from "next/link";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
+import { useCustomerConfirmPassword, useVendorConfirmPassword } from "@/queries/mutation";
 
 export default function SetupPasswordPage() {
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token") ?? "";
+  const type = (searchParams.get("type") as "customer" | "vendor" | null) ?? null;
+
+  const customerConfirm = useCustomerConfirmPassword();
+  const vendorConfirm = useVendorConfirmPassword();
+
   const form = useForm<CreatePasswordFormValues>({
     resolver: zodResolver(createPasswordForm),
     defaultValues: {
@@ -28,8 +37,15 @@ export default function SetupPasswordPage() {
   });
 
   const onSubmit = (values: CreatePasswordFormValues) => {
-    console.log("Create password submitted:", values);
-    // TODO: call API to set password
+    if (!token || !type) {
+      console.error("Missing token or type in URL params");
+      return;
+    }
+    if (type === "customer") {
+      customerConfirm.mutate({ token, password: values.password, confirmPassword: values.confirmPassword });
+    } else {
+      vendorConfirm.mutate({ token, password: values.password, confirmPassword: values.confirmPassword });
+    }
   };
 
   return (
@@ -41,7 +57,7 @@ export default function SetupPasswordPage() {
       
       />
       <div className="absolute inset-0 flex items-center justify-center p-2">
-        <div className="z-10 w-full max-w-2xl flex flex-col items-center justify-center gap-4 rounded-xl border border-border/50 bg-white 0 p-6 md:p-8">
+        <div className="z-10 w-full max-w-2xl flex flex-col items-center justify-center gap-4 rounded-xl border border-border/50 bg-accent 0 p-6 md:p-8">
           <Link href="/">
             <Image
               src="/assets/my-store-logo.png"
@@ -101,7 +117,11 @@ export default function SetupPasswordPage() {
                   )}
                 />
 
-                <InteractiveHoverButton type="submit" className="mt-5">
+                <InteractiveHoverButton
+                  type="submit"
+                  className="mt-5"
+                  loading={customerConfirm.isPending || vendorConfirm.isPending}
+                >
                   Continue
                 </InteractiveHoverButton>
               </div>

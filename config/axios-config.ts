@@ -1,13 +1,13 @@
 import axios from "axios";
 import { toast } from "sonner";
+// Note: Auth is handled by Better Auth. This Axios client is for non-auth APIs.
 
 // Type augmentation: allow a custom `showToast` flag on requests
 declare module "axios" {
-  // Keep generics to align with Axios types
-  interface AxiosRequestConfig<D = any> {
+  interface AxiosRequestConfig {
     showToast?: boolean;
   }
-  interface InternalAxiosRequestConfig<D = any> {
+  interface InternalAxiosRequestConfig {
     showToast?: boolean;
   }
 }
@@ -25,11 +25,6 @@ const apiClient = axios.create({
 
 // ===== Request Interceptor =====
 apiClient.interceptors.request.use((config) => {
-  // If you want to pass a token from localStorage or Zustand, do it here:
-  const token = localStorage.getItem("access_token");
-  if (token) {
-    config.headers["Authorization"] = `Bearer ${token}`;
-  }
   return config;
 });
 
@@ -54,8 +49,6 @@ apiClient.interceptors.response.use(
 
     if (status === 401) {
       toast.warning("Please login to continue");
-      // Optionally redirect to login page
-      window.location.href = "/authen";
     } else if (status === 403) {
       toast.error("You do not have permission to perform this action.");
     } else {
@@ -69,9 +62,9 @@ apiClient.interceptors.response.use(
 // ===== Simple API Methods =====
 const BaseRequest = {
   Get: (url: string, showToast = true) => apiClient.get(url, { showToast }),
-  Post: (url: string, data?: any, showToast = true) =>
+  Post: (url: string, data?: unknown, showToast = true) =>
     apiClient.post(url, data, { showToast }),
-  Put: (url: string, data?: any, showToast = true) =>
+  Put: (url: string, data?: unknown, showToast = true) =>
     apiClient.put(url, data, { showToast }),
   Delete: (url: string, showToast = true) =>
     apiClient.delete(url, { showToast }),

@@ -23,6 +23,24 @@ import { NavIcon } from "../styled";
 import { InteractiveHoverButton } from "../magicui/interactive-hover-button";
 
 import React, { useRef, useState } from "react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuPortal,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Skeleton } from "@/components/ui/skeleton";
+
+import { Button } from "../ui";
 
 interface NavbarProps {
   children: React.ReactNode;
@@ -33,6 +51,9 @@ interface NavBodyProps {
   children: React.ReactNode;
   className?: string;
   visible?: boolean;
+  isAuthenticated?: boolean;
+  isUserLoading?: boolean;
+  logOut?: () => void;
 }
 
 interface NavItemsProps {
@@ -100,7 +121,13 @@ export const Navbar = ({ children, className }: NavbarProps) => {
   );
 };
 
-export const NavBody = ({ className, visible }: NavBodyProps) => {
+export const NavBody = ({
+  className,
+  visible,
+  isAuthenticated,
+  isUserLoading,
+  logOut,
+}: NavBodyProps) => {
   return (
     <motion.div
       animate={{
@@ -117,7 +144,7 @@ export const NavBody = ({ className, visible }: NavBodyProps) => {
         damping: 50,
       }}
       style={{
-        minWidth: "800px",
+        minWidth: "80vw",
       }}
       className={cn(
         "relative z-[60] w-[50%] mx-auto hidden max-w-7xl flex-row items-center justify-between self-start rounded-full bg-transparent px-4 py-2 lg:flex dark:bg-transparent",
@@ -244,11 +271,83 @@ export const NavBody = ({ className, visible }: NavBodyProps) => {
       <div className="flex items-center gap-2 justify-end w-[25%]">
         <NavIcon />
 
-        <Link href="/authen">
-          <InteractiveHoverButton className="uppercase">
-            Log in
-          </InteractiveHoverButton>
-        </Link>
+        {isAuthenticated ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="secondary"
+                size="default"
+                className="rounded-full border-1 border-accent-foreground py-5"
+              >
+                <Avatar>
+                  <AvatarImage
+                    src="https://github.com/shadcn.png"
+                    alt="@shadcn"
+                  />
+                  <AvatarFallback>CN</AvatarFallback>
+                </Avatar>
+                Steve mai
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56 mt-[calc(15%-1rem)]" align="center" >
+              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuGroup>
+                <DropdownMenuItem>
+                  Profile
+                  <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  Billing
+                  <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  Settings
+                  <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  Keyboard shortcuts
+                  <DropdownMenuShortcut>⌘K</DropdownMenuShortcut>
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                <DropdownMenuItem>Team</DropdownMenuItem>
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger>Invite users</DropdownMenuSubTrigger>
+                  <DropdownMenuPortal>
+                    <DropdownMenuSubContent>
+                      <DropdownMenuItem>Email</DropdownMenuItem>
+                      <DropdownMenuItem>Message</DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem>More...</DropdownMenuItem>
+                    </DropdownMenuSubContent>
+                  </DropdownMenuPortal>
+                </DropdownMenuSub>
+                <DropdownMenuItem>
+                  New Team
+                  <DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={logOut}>
+                Log out
+                <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : isUserLoading ? (
+          <div className="flex items-center gap-1">
+            <Skeleton className="h-10 w-10 rounded-full" />
+            <Skeleton className="h-10 w-[10rem]" />
+          </div>
+        ) : (
+          <Link href="/authen">
+            <InteractiveHoverButton className="uppercase">
+              Log in
+            </InteractiveHoverButton>
+          </Link>
+        )}
       </div>
     </motion.div>
   );

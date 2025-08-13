@@ -14,12 +14,15 @@ import {
 import { InteractiveHoverButton } from "../magicui/interactive-hover-button";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { signOut, useSession } from "next-auth/react";
 
 interface HeaderProps {
   hiddenAt?: string;
 }
 
 export function Header({ hiddenAt }: HeaderProps) {
+  const { data: session, status } = useSession();
+
   const pathname = usePathname();
 
   const normalizePath = (path?: string) => {
@@ -67,7 +70,13 @@ export function Header({ hiddenAt }: HeaderProps) {
     <>
       <Navbar>
         {/* Desktop Navigation */}
-        <NavBody>
+        <NavBody
+          isAuthenticated={status === "authenticated"}
+          isUserLoading={status === "loading"}
+          logOut={async () => {
+            await signOut({ callbackUrl: "/authen" });
+          }}
+        >
           <NavbarLogo />
           <NavItems items={navItems} />
         </NavBody>
@@ -97,11 +106,38 @@ export function Header({ hiddenAt }: HeaderProps) {
               </Link>
             ))}
             <div className="flex w-full flex-col gap-4">
-              <InteractiveHoverButton
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Login
-              </InteractiveHoverButton>
+              {status === "authenticated" ? (
+                <Link
+                  href="/dashboard"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <InteractiveHoverButton className="w-full">
+                    Dashboard
+                  </InteractiveHoverButton>
+                </Link>
+              ) : (
+                <Link href="/authen" onClick={() => setIsMobileMenuOpen(false)}>
+                  <InteractiveHoverButton className="w-full">
+                    Login
+                  </InteractiveHoverButton>
+                </Link>
+              )}
+              {status === "unauthenticated" ? (
+                <Link href="/authen" onClick={() => setIsMobileMenuOpen(false)}>
+                  <InteractiveHoverButton className="w-full">
+                    Login
+                  </InteractiveHoverButton>
+                </Link>
+              ) : (
+                <Link
+                  href="/auth/logout"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <InteractiveHoverButton className="w-full">
+                    Logout
+                  </InteractiveHoverButton>
+                </Link>
+              )}
             </div>
           </MobileNavMenu>
         </MobileNav>

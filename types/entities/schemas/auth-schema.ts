@@ -50,7 +50,7 @@ export const signupFormSchema = z.discriminatedUnion("type", [
     phoneNumber: z
       .string()
       .min(1, { message: "Phone number is required" })
-      .regex(/^\d{10}$/, { message: "Phone number must be 10 digits" }),
+      .regex(/^0\d{9}$/, { message: "Phone number must start with 0 and be 10 digits" }),
   }),
 ]);
 

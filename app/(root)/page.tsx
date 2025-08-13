@@ -257,8 +257,8 @@ export default function Home() {
               </InteractiveHoverButton>
             </div>
 
-            <div className="flex flex-col justify-start items-center w-full  md:w-1/2">
-              <h2 className="text-2xl lg:text-4xl uppercase mb-6 font-bold  tracking-wide">
+            <div className="flex flex-col justify-start items-center w-full md:w-1/2">
+              <h2 className="text-2xl lg:text-4xl uppercase mb-6 font-bold tracking-wide">
                 Extra sale 30% off
               </h2>
               <span className="mt-[-2%] px-[16%] pb-[3%] pt-0 text-center">
