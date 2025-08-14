@@ -3,6 +3,8 @@ import { Bricolage_Grotesque } from "next/font/google";
 import "./globals.css";
 import { Header, Footer } from "@/components/layout";
 import Providers from "@/components/providers/Provider";
+import { Suspense } from "react";
+import { Spinner } from "@/components/styled";
 
 const bricolage = Bricolage_Grotesque({
   variable: "--font-bricolage",
@@ -26,11 +28,13 @@ export default function RootLayout({
         suppressHydrationWarning
         className={`${bricolage.variable} antialiased`}
       >
-        <Providers>
-          <Header hiddenAt="/setup-password" />
-          {children}
-          <Footer hiddenAt="/setup-password" />
-        </Providers>
+        <Suspense fallback={<Spinner />}>
+          <Providers>
+            <Header hiddenAt="/setup-password" />
+            {children}
+            <Footer hiddenAt="/setup-password" />
+          </Providers>
+        </Suspense>
       </body>
     </html>
   );
