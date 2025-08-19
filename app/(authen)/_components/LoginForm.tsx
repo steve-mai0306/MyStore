@@ -16,14 +16,19 @@ import { useRouter } from "next/navigation";
 
 export function LoginForm({
   className,
+  onError,
   ...props
-}: React.ComponentProps<"div">) {
+}: {
+  className?: string;
+  onError?: (message: string) => void;
+} & Omit<React.ComponentProps<"div">, "onError">) {
   const { register, handleSubmit } = useForm<{
     email: string;
     password: string;
   }>();
   const [loading, setLoading] = React.useState(false);
   const router = useRouter();
+
   const onSubmit = async (data: { email: string; password: string }) => {
     try {
       setLoading(true);
@@ -32,11 +37,20 @@ export function LoginForm({
         email: data.email,
         password: data.password,
       });
+
       if (res?.error) {
+        if (res.error === "CredentialsSignin") {
+          onError?.("Invalid email or password. Please try again.");
+        } else {
+          onError?.("Login failed. Please try again.");
+        }
         console.log("error login", res.error);
       } else {
         router.push("/"); // or dashboard
       }
+    } catch (error) {
+      onError?.("An unexpected error occurred. Please try again.");
+      console.error("Login error:", error);
     } finally {
       setLoading(false);
     }

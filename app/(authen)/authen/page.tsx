@@ -7,17 +7,24 @@ import { StyledBreadcrumb } from "@/components/styled";
 import { Container } from "@/components/layout";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useAuthStore } from "../store/useAuthStore";
-import { CheckCircle2Icon, Mail } from "lucide-react";
+import { CheckCircle2Icon, Mail, AlertCircleIcon } from "lucide-react";
 import { InteractiveHoverButton } from "@/components/magicui/interactive-hover-button";
 import Link from "next/link";
 
 export default function LoginPage() {
   const { customerRegistered, vendorRegistered, reset } = useAuthStore();
+  const [loginError, setLoginError] = React.useState<string | null>(null);
+
   React.useEffect(() => {
     return () => {
       reset();
     };
   }, [reset]);
+
+  const handleLoginError = (message: string) => {
+    setLoginError(message);
+  };
+
   return (
     <>
       <StyledBreadcrumb route="Login" />
@@ -34,6 +41,15 @@ export default function LoginPage() {
         delay={0.3}
       >
         <Container>
+          {loginError && (
+            <div className="my-4">
+              <Alert variant="destructive">
+                <AlertCircleIcon />
+                <AlertTitle>Login Error</AlertTitle>
+                <AlertDescription>{loginError}</AlertDescription>
+              </Alert>
+            </div>
+          )}
           {(customerRegistered || vendorRegistered) && (
             <div className="my-4">
               <Alert variant="success">
@@ -43,20 +59,25 @@ export default function LoginPage() {
                   {customerRegistered
                     ? "We've sent a email to your email address. Please check your email for the next steps."
                     : "Welcome vendors. We've sent a email to your email address. Please check your email for the next steps."}
-                  <InteractiveHoverButton
-                    className="w-fit mt-2"
-                    icon={<Mail size={20} />}
+                  <Link
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href="https://mail.google.com/"
                   >
-                    <Link target="_blank" rel="noopener noreferrer" href="https://mail.google.com/"> Go to Gmail</Link>
-                   
-                  </InteractiveHoverButton>
+                    <InteractiveHoverButton
+                      className="w-fit mt-2"
+                      icon={<Mail size={20} />}
+                    >
+                      Go to Gmail
+                    </InteractiveHoverButton>{" "}
+                  </Link>
                 </AlertDescription>
               </Alert>
             </div>
           )}
           <div className="grid min-h-svh lg:grid-cols-2 gap-4">
             <>
-              <LoginForm />
+              <LoginForm onError={handleLoginError} />
             </>
 
             <>

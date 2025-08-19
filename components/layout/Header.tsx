@@ -23,6 +23,8 @@ interface HeaderProps {
 export function Header({ hiddenAt }: HeaderProps) {
   const { data: session, status } = useSession();
 
+  console.log(session);
+
   const pathname = usePathname();
 
   const normalizePath = (path?: string) => {
@@ -71,6 +73,9 @@ export function Header({ hiddenAt }: HeaderProps) {
       <Navbar>
         {/* Desktop Navigation */}
         <NavBody
+          userAvatar={session?.user?.image ?? undefined}
+          userName={session?.user?.name ?? undefined}
+          userSlug={session?.user?.slug ?? undefined}
           isAuthenticated={status === "authenticated"}
           isUserLoading={status === "loading"}
           logOut={async () => {
