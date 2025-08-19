@@ -9,6 +9,8 @@ export const WishlistCard = () => {
         src={"/placeholder.svg"}
         alt="example"
         className="w-15 h-15 rounded-md object-cover"
+        width={60}
+        height={60}
       />
       <div className="flex-1">
         <h3 className="font-medium">Premium Laptop Stand</h3>

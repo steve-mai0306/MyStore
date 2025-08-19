@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { StyledBreadcrumb } from "@/components/styled";
 import { Container } from "@/components/layout";
@@ -21,14 +22,24 @@ import {
   ShoppingBag,
   Star,
   Plus,
+  User,
 } from "lucide-react";
 import { OrderCard, WishlistCard, AddressCard } from "../_components";
 import { useGetProfile } from "@/queries/query";
 import { useParams } from "next/navigation";
+import { useProfileStore } from "../store/useProfileStore";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function ProfilePage() {
   const { slug } = useParams<{ slug: string }>();
   const { data: profile, isLoading } = useGetProfile(slug);
+  const setProfile = useProfileStore((state) => state.setProfile);
+
+  useEffect(() => {
+    if (profile) {
+      setProfile(profile);
+    }
+  }, [profile, setProfile]);
 
   return (
     <>
@@ -37,31 +48,69 @@ export default function ProfilePage() {
         <Container>
           <div className="mb-8">
             <div className="flex flex-col md:flex-row md:items-center gap-6">
-              <Avatar className="w-24 h-24 border-2 border-border">
-                <AvatarImage src="/professional-headshot.png" alt="Profile" />
-                <AvatarFallback className="text-xl font-semibold">
-                  JD
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex-1">
-                <h1 className="text-2xl font-bold mb-2">John Doe</h1>
-                <p className="text-muted-foreground mb-3">
-                  Customer since March 2020
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  <Badge
-                    variant="secondary"
-                    className="flex items-center gap-1"
+              {isLoading ? (
+                <>
+                  <Skeleton className="w-24 h-24 rounded-full" />
+                  <div className="flex-1">
+                    <div className="flex gap-4 items-center mb-2">
+                      <Skeleton className="h-8 w-40" />
+                      <Skeleton className="h-6 w-20" />
+                    </div>
+                    <Skeleton className="h-6 w-64 mb-3" />
+                    <div className="flex flex-wrap gap-2">
+                      <Skeleton className="h-6 w-32" />
+                      <Skeleton className="h-6 w-24" />
+                    </div>
+                  </div>
+                  <Skeleton className="h-10 w-32" />
+                </>
+              ) : (
+                <>
+                  <Avatar className="w-24 h-24 border-2 border-border">
+                    <AvatarImage
+                      src={profile?.avatar ?? undefined}
+                      alt={profile?.slug}
+                    />
+                    <AvatarFallback className="text-xl font-semibold">
+                      {profile?.firstName?.charAt(0)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1">
+                    <div className="flex gap-4 items-center mb-2">
+                      <h1 className="text-2xl font-bold">
+                        {profile?.firstName} {profile?.lastName}
+                      </h1>
+                      <Badge
+                        variant="outline"
+                        className="flex items-center gap-1"
+                      >
+                        {profile?.slug}
+                      </Badge>
+                    </div>
+                    <p className="text-muted-foreground mb-3">
+                      {profile?.email || "No email provided"}
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      <Badge
+                        variant="secondary"
+                        className="flex items-center gap-1"
+                      >
+                        <MapPin className="w-3 h-3" />
+                        San Francisco, CA
+                      </Badge>
+                      <Badge variant="secondary">
+                        <User />
+                        Member
+                      </Badge>
+                    </div>
+                  </div>
+                  <InteractiveHoverButton
+                    icon={<Settings className="w-4 h-4" />}
                   >
-                    <MapPin className="w-3 h-3" />
-                    San Francisco, CA
-                  </Badge>
-                  <Badge variant="outline">Premium Member</Badge>
-                </div>
-              </div>
-              <InteractiveHoverButton icon={<Settings className="w-4 h-4" />}>
-                Edit Profile
-              </InteractiveHoverButton>
+                    Edit Profile
+                  </InteractiveHoverButton>
+                </>
+              )}
             </div>
           </div>
 
@@ -148,9 +197,7 @@ export default function ProfilePage() {
               <Card>
                 <CardHeader>
                   <CardTitle>Wishlist Items</CardTitle>
-                  <CardDescription>
-                    Items saved
-                  </CardDescription>
+                  <CardDescription>Items saved</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <WishlistCard />
@@ -183,9 +230,7 @@ export default function ProfilePage() {
               <Card>
                 <CardHeader>
                   <CardTitle>Your Reviews</CardTitle>
-                  <CardDescription>
-                    Reviews for purchased items
-                  </CardDescription>
+                  <CardDescription>Reviews for purchased items</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {[
