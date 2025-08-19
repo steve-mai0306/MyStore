@@ -1,10 +1,11 @@
 import { InteractiveHoverButton } from "@/components/magicui/interactive-hover-button";
 import { Plus, Heart } from "lucide-react";
+import Image from "next/image";
 
 export const WishlistCard = () => {
   return (
     <div className="flex items-center gap-4 p-4 border rounded-lg">
-      <img
+      <Image
         src={"/placeholder.svg"}
         alt="example"
         className="w-15 h-15 rounded-md object-cover"

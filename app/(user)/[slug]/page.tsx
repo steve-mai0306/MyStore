@@ -149,7 +149,7 @@ export default function ProfilePage() {
                 <CardHeader>
                   <CardTitle>Wishlist Items</CardTitle>
                   <CardDescription>
-                    Items you've saved for later
+                    Items saved
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -184,7 +184,7 @@ export default function ProfilePage() {
                 <CardHeader>
                   <CardTitle>Your Reviews</CardTitle>
                   <CardDescription>
-                    Reviews you've written for purchased items
+                    Reviews for purchased items
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
