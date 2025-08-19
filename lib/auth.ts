@@ -1,37 +1,53 @@
-import type { NextAuthOptions, User, Session, Account } from "next-auth"
-import CredentialsProvider from "next-auth/providers/credentials"
-import GoogleProvider from "next-auth/providers/google"
-import BaseRequest from "@/config/axios-config"
-import type { JWT } from "next-auth/jwt"
+import type { NextAuthOptions, User, Session, Account } from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
+import BaseRequest from "@/config/axios-config";
+import type { JWT } from "next-auth/jwt";
 
 type BackendEnvelope<T> = {
-  success: boolean
-  message: string
-  errors: unknown[]
-  data: T
-}
+  success: boolean;
+  message: string;
+  errors: unknown[];
+  data: T;
+};
 
-type LoginData = string
-type GoogleLoginData = string
+type LoginData = {
+  token: string;
+  roleId?: number | null;
+  role?: string | null;
+  fullName?: string | null;
+  slug?: string | null;
+  avatar?: string | null;
+  requiredTwoFactor?: boolean;
+};
+type GoogleLoginData = string;
 
 type ExtendedUser = User & {
-  accessToken: string
-  roleId?: string | number | null
-  accountId?: string | number | null
-}
+  accessToken: string;
+  roleId?: string | number | null;
+  role?: string | null;
+  accountId?: string | number | null;
+  slug?: string | null;
+};
 
 type ExtendedToken = JWT & {
-  accessToken?: string
-  roleId?: string | number | null
-  accountId?: string | number | null
-}
+  accessToken?: string;
+  roleId?: string | number | null;
+  role?: string | null;
+  accountId?: string | number | null;
+  name?: string | null;
+  slug?: string | null;
+  image?: string | null;
+};
 
 type ExtendedSession = Session & {
-  accessToken?: string | null
-  roleId?: string | number | null
-  accountId?: string | number | null
-  error?: string
-}
+  accessToken?: string | null;
+  roleId?: string | number | null;
+  role?: string | null;
+  accountId?: string | number | null;
+  slug? : string | null;
+  error?: string;
+};
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -42,7 +58,7 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials): Promise<User | null> {
-        if (!credentials?.email || !credentials?.password) return null
+        if (!credentials?.email || !credentials?.password) return null;
 
         try {
           const res = await fetch(
@@ -55,27 +71,37 @@ export const authOptions: NextAuthOptions = {
                 password: credentials.password,
               }),
             }
-          )
+          );
 
-          if (!res.ok) return null
+          if (!res.ok) {
+            if (res.status === 401) {
+              throw new Error("Invalid email or password");
+            }
+            throw new Error(`Authentication failed: ${res.status}`);
+          }
 
-          const json = (await res.json()) as BackendEnvelope<LoginData>
-          const tokenFromBackend = json?.data ?? null
-          if (!tokenFromBackend) return null
+          const json = (await res.json()) as BackendEnvelope<LoginData>;
+          const payload = json?.data ?? null;
+          if (!payload?.token) {
+            throw new Error("No token received from server");
+          }
 
           const u: ExtendedUser = {
             id: "0",
             email: credentials.email,
-            name: null,
-            image: null,
-            accessToken: tokenFromBackend,
-            roleId: null,
+            name: payload.fullName ?? null,
+            slug: payload.slug ?? null,
+            image: payload.avatar ?? null,
+            accessToken: payload.token,
+            roleId: payload.roleId ?? null,
+            role: payload.role ?? null,
             accountId: null,
-          }
+          };
           // Return as User while keeping extra fields available at runtime
-          return u as unknown as User
-        } catch {
-          return null
+          return u as unknown as User;
+        } catch (error) {
+          console.error("Auth error:", error);
+          return null;
         }
       },
     }),
@@ -88,38 +114,47 @@ export const authOptions: NextAuthOptions = {
 
   callbacks: {
     async jwt({ token, account, user }): Promise<JWT> {
-      const t = token as ExtendedToken
+      const t = token as ExtendedToken;
 
       if (user) {
-        const u = user as unknown as ExtendedUser
-        t.accessToken = u.accessToken
-        t.roleId = u.roleId ?? null
-        t.accountId = u.accountId ?? null
+        const u = user as unknown as ExtendedUser;
+        t.accessToken = u.accessToken;
+        t.roleId = u.roleId ?? null;
+        t.role = u.role ?? null;
+        t.accountId = u.accountId ?? null;
+        t.name = u.name ?? null;
+        t.slug = u.slug ?? null;
+        t.image = u.image ?? null;
       }
 
       if (account?.id_token) {
         const env = (await BaseRequest.Post(`/api/Auth/google-login`, {
           idToken: account.id_token,
-        })) as unknown as BackendEnvelope<GoogleLoginData>
-        if (!env?.data) throw new Error("Google login failed")
-        t.accessToken = env.data
-        t.roleId = null
-        t.accountId = null
+        })) as unknown as BackendEnvelope<GoogleLoginData>;
+        if (!env?.data) throw new Error("Google login failed");
+        t.accessToken = env.data;
+        t.roleId = null;
+        t.accountId = null;
       }
 
-      return t
+      return t;
     },
 
     async session({ session, token }) {
-      const s = session as ExtendedSession
-      const t = token as ExtendedToken
-      s.accessToken = t.accessToken ?? null
-      s.roleId = t.roleId ?? null
-      s.accountId = t.accountId ?? null
-      if (!s.accessToken) s.error = "There is problem with our server."
-      return s
+      const s = session as ExtendedSession;
+      const t = token as ExtendedToken;
+      s.accessToken = t.accessToken ?? null;
+      if (!s.accessToken) s.error = "There is problem with our server.";
+      s.roleId = t.roleId ?? null;
+      s.role = t.role ?? null;
+      if (s.user) {
+        s.user.name = t.name ?? s.user.name ?? null;
+        s.user.image = t.image ?? s.user.image ?? null;
+        s.user.slug = t.slug ?? s.user.slug ?? null;
+      }
+      return s;
     },
   },
 
   secret: process.env.NEXTAUTH_SECRET,
-}
+};

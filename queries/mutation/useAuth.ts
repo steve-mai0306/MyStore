@@ -1,11 +1,13 @@
 import { useMutation } from "@tanstack/react-query";
-import BaseRequest, { BASE_URL } from "@/config/axios-config";
+import BaseRequest from "@/config/axios-config";
 import "@bprogress/core/css";
 import { BProgress } from "@bprogress/core";
 import { useRouter } from "next/navigation";
 
 interface RegisterCustomerPayload {
   email: string;
+  firstName: string;
+  lastName: string;
 }
 
 interface RegisterVendorPayload extends RegisterCustomerPayload {
@@ -21,21 +23,6 @@ interface PasswordConfirm {
   confirmPassword: string;
 }
 
-interface LoginPayload {
-  email: string;
-  password: string;
-}
-
-interface LoginResponse {
-  accessToken?: string;
-  access_token?: string;
-  token?: string;
-  data?: {
-    accessToken?: string;
-    access_token?: string;
-    token?: string;
-  };
-}
 
 const SUB_URL = "/Auth";
 
@@ -83,7 +70,7 @@ export const useCustomerConfirmPassword = () => {
   const router = useRouter();
   return useMutation({
     mutationFn: async (payload: PasswordConfirm) => {
-      return BaseRequest.Post(`${SUB_URL}/confirm-customer`, payload);
+      return BaseRequest.Post(`${SUB_URL}/setup-password`, payload);
     },
     onMutate: () => {
       BProgress.start();

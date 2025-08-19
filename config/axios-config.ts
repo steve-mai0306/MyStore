@@ -1,5 +1,6 @@
 import axios from "axios";
 import { toast } from "sonner";
+import { getSession } from "next-auth/react";
 // Note: Auth is handled by Better Auth. This Axios client is for non-auth APIs.
 
 // Type augmentation: allow a custom `showToast` flag on requests
@@ -24,7 +25,22 @@ const apiClient = axios.create({
 });
 
 // ===== Request Interceptor =====
-apiClient.interceptors.request.use((config) => {
+apiClient.interceptors.request.use(async (config) => {
+  try {
+    const session = await getSession();
+    const token = (session as any)?.accessToken as string | undefined;
+    if (token) {
+      if (config.headers && (config.headers as any).set) {
+        (config.headers as any).set("Authorization", `Bearer ${token}`);
+      } else if (config.headers) {
+        (config.headers as any)["Authorization"] = `Bearer ${token}`;
+      } else {
+        (config as any).headers = { Authorization: `Bearer ${token}` } as any;
+      }
+    }
+  } catch {
+    // no-op: proceed without token
+  }
   return config;
 });
 

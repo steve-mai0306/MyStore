@@ -27,6 +27,14 @@ export const signupFormSchema = z.discriminatedUnion("type", [
       .string()
       .min(1, { message: "Email is required" })
       .email({ message: "Please enter a valid email address" }),
+    firstName: z
+      .string()
+      .min(1, { message: "First name is required" })
+      .min(2, { message: "First name must be at least 2 characters" }),
+    lastName: z
+      .string()
+      .min(1, { message: "Last name is required" })
+      .min(2, { message: "Last name must be at least 2 characters" }),
     type: z.literal("customer"),
   }),
   z.object({
@@ -50,7 +58,9 @@ export const signupFormSchema = z.discriminatedUnion("type", [
     phoneNumber: z
       .string()
       .min(1, { message: "Phone number is required" })
-      .regex(/^0\d{9}$/, { message: "Phone number must start with 0 and be 10 digits" }),
+      .regex(/^0\d{9}$/, {
+        message: "Phone number must start with 0 and be 10 digits",
+      }),
   }),
 ]);
 

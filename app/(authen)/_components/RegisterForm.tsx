@@ -26,7 +26,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useRegisterCustomer, useRegisterVendor } from "@/queries/mutation";
 import { useAuthStore } from "../store/useAuthStore";
 
-
 export function RegisterForm({
   className,
   ...props
@@ -48,7 +47,11 @@ export function RegisterForm({
   const onSubmit = (data: SignupFormValues) => {
     if (data.type === "customer") {
       registerMutation.mutate(
-        { email: data.email },
+        {
+          email: data.email,
+          firstName: data.firstName,
+          lastName: data.lastName,
+        },
         {
           onSuccess: () => {
             setCustomerRegistered(true);
@@ -78,8 +81,6 @@ export function RegisterForm({
     form.setValue("type", value);
 
     if (value === "customer") {
-      form.unregister("firstName");
-      form.unregister("lastName");
       form.unregister("shopName");
       form.unregister("phoneNumber");
     }
@@ -120,6 +121,33 @@ export function RegisterForm({
                   )}
                 />
 
+                <FormField
+                  control={form.control}
+                  name="firstName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>First Name</FormLabel>
+                      <FormControl>
+                        <Input {...field} value={field.value ?? ""} required />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="lastName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Last Name</FormLabel>
+                      <FormControl>
+                        <Input {...field} value={field.value ?? ""} required />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
                 <AnimatePresence>
                   {registrationType === "vendor" && (
                     <motion.div
@@ -129,40 +157,6 @@ export function RegisterForm({
                       transition={{ duration: 0.3, ease: "easeInOut" }}
                       className="space-y-4"
                     >
-                      <FormField
-                        control={form.control}
-                        name="firstName"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>First Name</FormLabel>
-                            <FormControl>
-                              <Input
-                                {...field}
-                                value={field.value ?? ""}
-                                required
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="lastName"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Last Name</FormLabel>
-                            <FormControl>
-                              <Input
-                                {...field}
-                                value={field.value ?? ""}
-                                required
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
                       <FormField
                         control={form.control}
                         name="shopName"

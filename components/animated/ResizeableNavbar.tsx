@@ -51,6 +51,9 @@ interface NavBodyProps {
   children: React.ReactNode;
   className?: string;
   visible?: boolean;
+  userAvatar?: string;
+  userSlug?: string;
+  userName?: string;
   isAuthenticated?: boolean;
   isUserLoading?: boolean;
   logOut?: () => void;
@@ -124,6 +127,9 @@ export const Navbar = ({ children, className }: NavbarProps) => {
 export const NavBody = ({
   className,
   visible,
+  userAvatar,
+  userName,
+  userSlug,
   isAuthenticated,
   isUserLoading,
   logOut,
@@ -135,7 +141,7 @@ export const NavBody = ({
         boxShadow: visible
           ? "0 0 24px rgba(34, 42, 53, 0.06), 0 1px 1px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(34, 42, 53, 0.04), 0 0 4px rgba(34, 42, 53, 0.08), 0 16px 68px rgba(47, 48, 55, 0.05), 0 1px 0 rgba(255, 255, 255, 0.1) inset"
           : "none",
-        width: visible ? "60%" : "100%",
+        width: visible ? "70%" : "100%",
         y: visible ? 20 : 0,
       }}
       transition={{
@@ -144,7 +150,7 @@ export const NavBody = ({
         damping: 50,
       }}
       style={{
-        minWidth: "80vw",
+        minWidth: "70vw",
       }}
       className={cn(
         "relative z-[60] w-[50%] mx-auto hidden max-w-7xl flex-row items-center justify-between self-start rounded-full bg-transparent px-4 py-2 lg:flex dark:bg-transparent",
@@ -275,33 +281,36 @@ export const NavBody = ({
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
-                variant="secondary"
+                variant="ghost"
                 size="default"
                 className="rounded-full border-1 border-accent-foreground py-5"
               >
                 <Avatar>
-                  <AvatarImage
-                    src="https://github.com/shadcn.png"
-                    alt="@shadcn"
-                  />
-                  <AvatarFallback>CN</AvatarFallback>
+                  <AvatarImage src={userAvatar} alt={userName} />
+                  <AvatarFallback>MY</AvatarFallback>
                 </Avatar>
-                Steve mai
+                {userName}
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56 mt-[calc(15%-1rem)]" align="center" >
+            <DropdownMenuContent
+              className="w-56 mt-[calc(15%-1rem)]"
+              align="center"
+            >
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuGroup>
-                <DropdownMenuItem>
-                  Profile
-                  <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-                </DropdownMenuItem>
+                <Link href={`/${userSlug}`}>
+                  <DropdownMenuItem>
+                    Profile
+                    <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+                  </DropdownMenuItem>
+                </Link>
+
                 <DropdownMenuItem>
                   Billing
                   <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  Settings
+                  My orders
                   <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
@@ -339,7 +348,7 @@ export const NavBody = ({
         ) : isUserLoading ? (
           <div className="flex items-center gap-1">
             <Skeleton className="h-10 w-10 rounded-full" />
-            <Skeleton className="h-10 w-[10rem]" />
+            <Skeleton className="h-10 w-[7rem]" />
           </div>
         ) : (
           <Link href="/authen">
