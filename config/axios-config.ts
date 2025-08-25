@@ -1,6 +1,7 @@
 import axios from "axios";
 import { toast } from "sonner";
 import { getSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
 // Note: Auth is handled by Better Auth. This Axios client is for non-auth APIs.
 
 // Type augmentation: allow a custom `showToast` flag on requests
@@ -53,7 +54,7 @@ apiClient.interceptors.response.use(
     }
     return response.data;
   },
-  (error) => {
+  async (error) => {
     const { response } = error;
 
     if (!response) {
@@ -65,6 +66,7 @@ apiClient.interceptors.response.use(
 
     if (status === 401) {
       toast.warning("Please login to continue");
+      await signOut({ redirect: true, callbackUrl: "/authen" });
     } else if (status === 403) {
       toast.error("You do not have permission to perform this action.");
     } else {

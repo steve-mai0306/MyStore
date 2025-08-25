@@ -17,13 +17,11 @@ import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 
 interface HeaderProps {
-  hiddenAt?: string;
+  hiddenAt?: string | string[];
 }
 
 export function Header({ hiddenAt }: HeaderProps) {
   const { data: session, status } = useSession();
-
-  console.log(session);
 
   const pathname = usePathname();
 
@@ -35,8 +33,12 @@ export function Header({ hiddenAt }: HeaderProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const shouldHide =
-    Boolean(hiddenAt) && normalizePath(pathname) === normalizePath(hiddenAt);
-
+    Boolean(hiddenAt) &&
+    (Array.isArray(hiddenAt)
+      ? hiddenAt.some((path) =>
+          normalizePath(pathname).startsWith(normalizePath(path))
+        )
+      : normalizePath(pathname).startsWith(normalizePath(hiddenAt)));
   if (shouldHide) {
     return null;
   }
