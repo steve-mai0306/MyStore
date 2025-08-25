@@ -14,6 +14,7 @@ import Link from "next/link";
 export default function LoginPage() {
   const { customerRegistered, vendorRegistered, reset } = useAuthStore();
   const [loginError, setLoginError] = React.useState<string | null>(null);
+  const [registerError, setRegisterError] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     return () => {
@@ -23,6 +24,10 @@ export default function LoginPage() {
 
   const handleLoginError = (message: string) => {
     setLoginError(message);
+  };
+
+   const handleRegisterError = (message: string) => {
+    setRegisterError(message);
   };
 
   return (
@@ -50,6 +55,17 @@ export default function LoginPage() {
               </Alert>
             </div>
           )}
+
+          {registerError && (
+            <div className="my-4">
+              <Alert variant="destructive">
+                <AlertCircleIcon />
+                <AlertTitle>Registration Error</AlertTitle>
+                <AlertDescription>{registerError}</AlertDescription>
+              </Alert>
+            </div>
+          )}
+          
           {(customerRegistered || vendorRegistered) && (
             <div className="my-4">
               <Alert variant="success">
@@ -81,7 +97,7 @@ export default function LoginPage() {
             </>
 
             <>
-              <RegisterForm />
+              <RegisterForm onError={handleRegisterError} />
             </>
           </div>
         </Container>

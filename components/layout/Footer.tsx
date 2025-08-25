@@ -6,7 +6,7 @@ import { InteractiveHoverButton } from "../magicui/interactive-hover-button";
 import { usePathname } from "next/navigation";
 
 interface FooterProps {
-  hiddenAt?: string;
+  hiddenAt?: string | string[];
 }
 
 export const Footer = ({ hiddenAt }: FooterProps) => {
@@ -18,7 +18,12 @@ export const Footer = ({ hiddenAt }: FooterProps) => {
   };
 
   const shouldHide =
-    Boolean(hiddenAt) && normalizePath(pathname) === normalizePath(hiddenAt);
+    Boolean(hiddenAt) &&
+    (Array.isArray(hiddenAt)
+      ? hiddenAt.some((path) =>
+          normalizePath(pathname).startsWith(normalizePath(path))
+        )
+      : normalizePath(pathname).startsWith(normalizePath(hiddenAt)));
 
   if (shouldHide) {
     return null;

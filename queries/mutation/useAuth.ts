@@ -66,7 +66,7 @@ export const useRegisterVendor = () => {
   });
 };
 
-export const useCustomerConfirmPassword = () => {
+export const useSetupPassword = () => {
   const router = useRouter();
   return useMutation({
     mutationFn: async (payload: PasswordConfirm) => {
@@ -79,7 +79,7 @@ export const useCustomerConfirmPassword = () => {
       BProgress.done();
     },
     onSuccess: () => {
-      console.log("Customer password confirmed successfully!");
+      console.log("Your password confirmed successfully!");
       router.push("/authen");
     },
     onError: (error) => {
@@ -88,24 +88,3 @@ export const useCustomerConfirmPassword = () => {
   });
 };
 
-export const useVendorConfirmPassword = () => {
-  const router = useRouter();
-  return useMutation({
-    mutationFn: async (payload: PasswordConfirm) => {
-      return BaseRequest.Post(`${SUB_URL}/confirm-vendor`, payload);
-    },
-    onMutate: () => {
-      BProgress.start();
-    },
-    onSettled: () => {
-      BProgress.done();
-    },
-    onSuccess: () => {
-      console.log("Vendor password confirmed successfully!");
-      router.push("/authen");
-    },
-    onError: (error) => {
-      console.error("Error confirming vendor password:", error);
-    },
-  });
-};

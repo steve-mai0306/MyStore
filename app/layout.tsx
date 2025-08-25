@@ -30,9 +30,9 @@ export default function RootLayout({
       >
         <Suspense fallback={<Spinner />}>
           <Providers>
-            <Header hiddenAt="/setup-password" />
+            <Header hiddenAt={["/setup-password", "/vendor"]}  />
             {children}
-            <Footer hiddenAt="/setup-password" />
+            <Footer hiddenAt={["/setup-password", "/vendor"]} />
           </Providers>
         </Suspense>
       </body>

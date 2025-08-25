@@ -17,12 +17,12 @@ export const AddressCard = () => {
         United States
       </p>
       <div className="flex gap-2 mt-3">
-        <InteractiveHoverButton icon={<Pencil/>}>Edit</InteractiveHoverButton>
+        <InteractiveHoverButton icon={<Pencil size={18}/>}>Edit</InteractiveHoverButton>
         <InteractiveHoverButton
-          icon={<Trash />}
+          icon={<Trash size={18}/>}
           className="bg-destructive text-white"
         >
-          Delete
+          Remove
         </InteractiveHoverButton>
       </div>
     </div>

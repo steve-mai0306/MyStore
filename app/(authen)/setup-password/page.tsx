@@ -18,15 +18,15 @@ import { InteractiveHoverButton } from "@/components/magicui/interactive-hover-b
 import Link from "next/link";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
-import { useCustomerConfirmPassword, useVendorConfirmPassword } from "@/queries/mutation";
+import { useSetupPassword } from "@/queries/mutation";
 
 export default function SetupPasswordPage() {
   const searchParams = useSearchParams();
   const token = searchParams.get("token") ?? "";
-  const type = (searchParams.get("type") as "customer" | "vendor" | null) ?? null;
+  const type =
+    (searchParams.get("type") as "customer" | "vendor" | null) ?? null;
 
-  const customerConfirm = useCustomerConfirmPassword();
-  const vendorConfirm = useVendorConfirmPassword();
+  const passwordConfirm = useSetupPassword();
 
   const form = useForm<CreatePasswordFormValues>({
     resolver: zodResolver(createPasswordForm),
@@ -41,21 +41,23 @@ export default function SetupPasswordPage() {
       console.error("Missing token or type in URL params");
       return;
     }
-    if (type === "customer") {
-      customerConfirm.mutate({ token, password: values.password, confirmPassword: values.confirmPassword });
-    } else {
-      vendorConfirm.mutate({ token, password: values.password, confirmPassword: values.confirmPassword });
-    }
+    passwordConfirm.mutate(
+      {
+        token,
+        password: values.password,
+        confirmPassword: values.confirmPassword,
+      },
+      {
+        onError: (error) => {
+          console.error("Error confirming password:", error);
+        },
+      }
+    );
   };
 
   return (
     <div className="relative min-h-screen h-[100vh] bg-black">
-      <Galaxy
-        mouseInteraction={false}
-        density={1}
-        glowIntensity={0.2}
-      
-      />
+      <Galaxy mouseInteraction={false} density={1} glowIntensity={0.2} />
       <div className="absolute inset-0 flex items-center justify-center p-2">
         <div className="z-10 w-full max-w-2xl flex flex-col items-center justify-center gap-4 rounded-xl border border-border/50 bg-accent 0 p-6 md:p-8">
           <Link href="/">
@@ -120,7 +122,7 @@ export default function SetupPasswordPage() {
                 <InteractiveHoverButton
                   type="submit"
                   className="mt-5"
-                  loading={customerConfirm.isPending || vendorConfirm.isPending}
+                  loading={passwordConfirm.isPending}
                 >
                   Continue
                 </InteractiveHoverButton>
@@ -128,7 +130,10 @@ export default function SetupPasswordPage() {
             </form>
           </Form>
           <p className="text-muted-foreground text-base text-center leading-relaxed">
-            If you have problem when creating <Link href="#" className="underline">Contact us</Link>
+            If you have problem when creating{" "}
+            <Link href="#" className="underline">
+              Contact us
+            </Link>
           </p>
         </div>
       </div>

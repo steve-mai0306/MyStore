@@ -287,7 +287,9 @@ export const NavBody = ({
               >
                 <Avatar>
                   <AvatarImage src={userAvatar} alt={userName} />
-                  <AvatarFallback>MY</AvatarFallback>
+                  <AvatarFallback>
+                    {userName?.charAt(0).toUpperCase()}
+                  </AvatarFallback>
                 </Avatar>
                 {userName}
               </Button>

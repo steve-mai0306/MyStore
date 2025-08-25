@@ -1,5 +1,5 @@
 import { InteractiveHoverButton } from "@/components/magicui/interactive-hover-button";
-import { Plus, Heart } from "lucide-react";
+import { Plus, Trash } from "lucide-react";
 import Image from "next/image";
 
 export const WishlistCard = () => {
@@ -17,11 +17,14 @@ export const WishlistCard = () => {
         <p className="text-lg font-semibold text-primary">$79.99</p>
       </div>
       <div className="flex gap-2">
-        <InteractiveHoverButton icon={<Plus />}>
+        <InteractiveHoverButton icon={<Plus size={18} />}>
           Add to Cart
         </InteractiveHoverButton>
-        <InteractiveHoverButton icon={<Heart className="w-4 h-4" />}>
-          Add
+        <InteractiveHoverButton
+          icon={<Trash size={18} />}
+          className="bg-destructive text-white"
+        >
+          Remove
         </InteractiveHoverButton>
       </div>
     </div>
