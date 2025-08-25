@@ -56,7 +56,7 @@ export default function VendorDashboardPage() {
     setIsEditing(false);
   };
 
-  const updateVendorData = (field: string, value: any) => {
+  const updateVendorData = (field: keyof typeof vendorData, value: string | boolean) => {
     setVendorData((prev) => ({ ...prev, [field]: value }));
   };
 
