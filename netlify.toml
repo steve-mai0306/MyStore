@@ -5,3 +5,7 @@
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
+
+[[edge_functions]]
+  function = "auth"
+  path = "/*"
