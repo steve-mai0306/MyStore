@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, QueryClient, useQueryClient } from "@tanstack/react-query";
 import BaseRequest from "@/config/axios-config";
 import "@bprogress/core/css";
 import { BProgress } from "@bprogress/core";

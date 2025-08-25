@@ -28,8 +28,12 @@ import { useAuthStore } from "../store/useAuthStore";
 
 export function RegisterForm({
   className,
+  onError,
   ...props
-}: React.ComponentProps<"div">) {
+}: {
+  className?: string;
+  onError?: (message: string) => void;
+} & Omit<React.ComponentProps<"div">, "onError">) {
   const [registrationType, setRegistrationType] = useState<string>("");
   const form = useForm<SignupFormValues>({
     resolver: zodResolver(signupFormSchema),
@@ -56,6 +60,9 @@ export function RegisterForm({
           onSuccess: () => {
             setCustomerRegistered(true);
           },
+          onError: (error) => {
+            onError?.(error.message);
+          },
         }
       );
     } else {
@@ -70,6 +77,9 @@ export function RegisterForm({
         {
           onSuccess: () => {
             setVendorRegistered(true);
+          },
+          onError: (error) => {
+            onError?.(error.message);
           },
         }
       );

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import * as React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { StyledBreadcrumb } from "@/components/styled";
 import { Container } from "@/components/layout";
@@ -23,23 +23,58 @@ import {
   Star,
   Plus,
   User,
+  ChevronDownIcon,
 } from "lucide-react";
 import { OrderCard, WishlistCard, AddressCard } from "../_components";
 import { useGetProfile } from "@/queries/query";
-import { useParams } from "next/navigation";
-import { useProfileStore } from "../store/useProfileStore";
+import { useParams, notFound } from "next/navigation";
+
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import Link from "next/link";
 
 export default function ProfilePage() {
   const { slug } = useParams<{ slug: string }>();
   const { data: profile, isLoading } = useGetProfile(slug);
-  const setProfile = useProfileStore((state) => state.setProfile);
+  //const setProfile = useProfileStore((state) => state.setProfile);
+  const [open, setOpen] = React.useState(false);
+  const [date, setDate] = React.useState<Date | undefined>(undefined);
+  const dialogRef = React.useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (profile) {
-      setProfile(profile);
-    }
-  }, [profile, setProfile]);
+  if (!isLoading && !profile) {
+    notFound();
+  }
 
   return (
     <>
@@ -72,20 +107,29 @@ export default function ProfilePage() {
                       alt={profile?.slug}
                     />
                     <AvatarFallback className="text-xl font-semibold">
-                      {profile?.firstName?.charAt(0)}
+                      {profile?.lastName?.charAt(0)}
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex-1">
                     <div className="flex gap-4 items-center mb-2">
                       <h1 className="text-2xl font-bold">
-                        {profile?.firstName} {profile?.lastName}
+                        {profile?.lastName} {profile?.firstName}
                       </h1>
-                      <Badge
-                        variant="outline"
-                        className="flex items-center gap-1"
-                      >
-                        {profile?.slug}
-                      </Badge>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Badge
+                            variant="outline"
+                            className="flex items-center gap-1"
+                          >
+                            {profile?.slug}
+                          </Badge>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>
+                            You can edit your slug which how we recognize you{" "}
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
                     </div>
                     <p className="text-muted-foreground mb-3">
                       {profile?.email || "No email provided"}
@@ -100,15 +144,138 @@ export default function ProfilePage() {
                       </Badge>
                       <Badge variant="secondary">
                         <User />
-                        Member
+                        Standar user
                       </Badge>
                     </div>
                   </div>
-                  <InteractiveHoverButton
-                    icon={<Settings className="w-4 h-4" />}
-                  >
-                    Edit Profile
-                  </InteractiveHoverButton>
+                  <Dialog>
+                    <form>
+                      <DialogTrigger asChild>
+                        <InteractiveHoverButton icon={<Settings size={18} />}>
+                          Edit Profile
+                        </InteractiveHoverButton>
+                      </DialogTrigger>
+                      <DialogContent
+                        ref={dialogRef}
+                        className="sm:max-w-[425px]"
+                      >
+                        <DialogHeader>
+                          <DialogTitle>Edit profile</DialogTitle>
+                          <DialogDescription>
+                            Make changes to your profile here. Click save when
+                            you&apos;re done.
+                          </DialogDescription>
+                        </DialogHeader>
+                        <div className="grid gap-4">
+                          <div className="grid grid-cols-1 md:grid-cols-2 grid-rows-1 gap-3">
+                            <div className="grid gap-3">
+                              <Label htmlFor="firstName">Name</Label>
+                              <Input
+                                id="firstName"
+                                name="firstName"
+                                defaultValue={profile?.firstName || ""}
+                              />
+                            </div>
+                            <div className="grid gap-3">
+                              <Label htmlFor="lastName">Name</Label>
+                              <Input
+                                id="lastName"
+                                name="lastName"
+                                defaultValue={profile?.lastName || ""}
+                              />
+                            </div>
+                          </div>
+                          <div className="grid gap-3">
+                            <Label htmlFor="username-1">Slug</Label>
+                            <Input
+                              id="slug"
+                              name="slug"
+                              defaultValue={profile?.slug || ""}
+                            />
+                          </div>
+                          <div className="grid gap-3">
+                            <Label htmlFor="email">Email</Label>
+                            <Input
+                              id="email"
+                              name="email"
+                              defaultValue={profile?.email || ""}
+                              disabled
+                            />
+                          </div>
+                          <Link
+                            href="#"
+                            className="mr-auto inline-block text-sm underline-offset-4 hover:underline"
+                          >
+                            Change email address?
+                          </Link>
+                          <div className="grid gap-3">
+                            <Label htmlFor="phone">Phone number</Label>
+                            <Input
+                              id="phone"
+                              name="phone"
+                              type="tel"
+                              defaultValue={profile?.phoneNumber || ""}
+                            />
+                          </div>
+                          <div className="grid grid-cols-1 md:grid-cols-2 grid-rows-1 gap-3">
+                            <div className="grid gap-3">
+                              <Label htmlFor="date">Date of birth</Label>
+                              <Popover open={open} onOpenChange={setOpen}>
+                                <PopoverTrigger asChild>
+                                  <Button
+                                    variant="outline"
+                                    id="date"
+                                    className="justify-between font-normal"
+                                  >
+                                    {date
+                                      ? date.toLocaleDateString()
+                                      : "Select date"}
+                                    <ChevronDownIcon />
+                                  </Button>
+                                </PopoverTrigger>
+                                <PopoverContent
+                                  className="w-auto overflow-hidden p-0"
+                                  align="start"
+                                >
+                                  <Calendar
+                                    mode="single"
+                                    selected={date}
+                                    captionLayout="dropdown"
+                                    onSelect={(date) => {
+                                      setDate(date);
+                                      setOpen(false);
+                                    }}
+                                  />
+                                </PopoverContent>
+                              </Popover>
+                            </div>
+                            <div className="grid gap-3">
+                              <Select>
+                                <Label htmlFor="gender">Select gender</Label>
+                                <SelectTrigger className="w-full">
+                                  <SelectValue placeholder="Your gender" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectGroup>
+                                    <SelectItem value="male">Male</SelectItem>
+                                    <SelectItem value="female">
+                                      Female
+                                    </SelectItem>
+                                  </SelectGroup>
+                                </SelectContent>
+                              </Select>
+                            </div>
+                          </div>
+                        </div>
+                        <DialogFooter>
+                          <DialogClose asChild>
+                            <Button variant="outline">Cancel</Button>
+                          </DialogClose>
+                          <Button type="submit">Save changes</Button>
+                        </DialogFooter>
+                      </DialogContent>
+                    </form>
+                  </Dialog>
                 </>
               )}
             </div>
