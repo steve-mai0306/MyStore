@@ -1,7 +1,10 @@
 [build]
   command = "npm run build"
-  publish = ".next"
   functions = "netlify/functions"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
+
+[[edge_functions]]
+  function = "auth"
+  path = "/*"
