@@ -107,7 +107,7 @@ export const Navbar = ({ children, className }: NavbarProps) => {
       ref={ref}
       // IMPORTANT: Change this to class of `fixed` if you want the navbar to be fixed
       className={cn(
-        "sticky inset-x-0 top-0 z-100 w-full transition-colors duration-300",
+        "sticky inset-x-0 top-0 z-50 w-full transition-colors duration-300",
         visible ? "bg-transparent" : "bg-transparent",
         className
       )}
@@ -315,10 +315,12 @@ export const NavBody = ({
                   My orders
                   <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
                 </DropdownMenuItem>
-                <DropdownMenuItem>
-                  Keyboard shortcuts
-                  <DropdownMenuShortcut>⌘K</DropdownMenuShortcut>
-                </DropdownMenuItem>
+                <Link href={`/settings`}>
+                  <DropdownMenuItem>
+                    Settings
+                    <DropdownMenuShortcut>⌘K</DropdownMenuShortcut>
+                  </DropdownMenuItem>
+                </Link>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuGroup>

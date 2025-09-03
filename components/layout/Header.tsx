@@ -15,6 +15,7 @@ import { InteractiveHoverButton } from "../magicui/interactive-hover-button";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
+import { useUser } from "@/hooks/use-user";
 
 interface HeaderProps {
   hiddenAt?: string | string[];
@@ -22,6 +23,9 @@ interface HeaderProps {
 
 export function Header({ hiddenAt }: HeaderProps) {
   const { data: session, status } = useSession();
+  const { user } = useUser();
+
+  //console.log(session)
 
   const pathname = usePathname();
 
@@ -75,9 +79,9 @@ export function Header({ hiddenAt }: HeaderProps) {
       <Navbar>
         {/* Desktop Navigation */}
         <NavBody
-          userAvatar={session?.user?.image ?? undefined}
-          userName={session?.user?.name ?? undefined}
-          userSlug={session?.user?.slug ?? undefined}
+          userAvatar={user?.avatar ?? session?.user?.image ?? undefined}
+          userName={user?.firstName && user?.lastName ? `${user.lastName} ${user.firstName}` : session?.user?.name ?? undefined}
+          userSlug={user?.slug ?? session?.user?.slug ?? undefined}
           isAuthenticated={status === "authenticated"}
           isUserLoading={status === "loading"}
           logOut={async () => {

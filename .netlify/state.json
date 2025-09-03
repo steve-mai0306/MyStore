@@ -1,0 +1,21 @@
+{
+	"promptVSCodeSettings": true,
+	"geolocation": {
+		"data": {
+			"city": "Diên Khánh",
+			"country": {
+				"code": "VN",
+				"name": "Vietnam"
+			},
+			"subdivision": {
+				"code": "34",
+				"name": "Khánh Hòa Province"
+			},
+			"timezone": "Asia/Ho_Chi_Minh",
+			"latitude": 12.2552,
+			"longitude": 109.1034,
+			"postalCode": "650000"
+		},
+		"timestamp": 1756104777383
+	}
+}
