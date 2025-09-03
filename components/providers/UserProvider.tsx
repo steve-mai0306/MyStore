@@ -35,7 +35,19 @@ export function UserProvider({ children }: UserProviderProps) {
 
   useEffect(() => {
     if (profile && !isLoading) {
-      setUser(profile);
+      // Map gender from string|null to boolean|null
+      const mappedProfile = {
+        ...profile,
+        gender:
+          profile.gender === null
+            ? null
+            : profile.gender === "male"
+            ? true
+            : profile.gender === "female"
+            ? false
+            : null,
+      };
+      setUser(mappedProfile);
     }
   }, [profile, isLoading, setUser]);
 
