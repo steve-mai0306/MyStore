@@ -28,6 +28,7 @@ type ExtendedUser = User & {
   role?: string | null;
   accountId?: string | number | null;
   slug?: string | null;
+  requiredTwoFactor?: boolean;
 };
 
 type ExtendedToken = JWT & {
@@ -38,6 +39,7 @@ type ExtendedToken = JWT & {
   name?: string | null;
   slug?: string | null;
   image?: string | null;
+  requiredTwoFactor?: boolean;
 };
 
 type ExtendedSession = Session & {
@@ -46,6 +48,7 @@ type ExtendedSession = Session & {
   role?: string | null;
   accountId?: string | number | null;
   slug? : string | null;
+  requiredTwoFactor?: boolean;
   error?: string;
 };
 
@@ -96,6 +99,7 @@ export const authOptions: NextAuthOptions = {
             roleId: payload.roleId ?? null,
             role: payload.role ?? null,
             accountId: null,
+            requiredTwoFactor: payload.requiredTwoFactor ?? false,
           };
           // Return as User while keeping extra fields available at runtime
           return u as unknown as User;
@@ -125,6 +129,7 @@ export const authOptions: NextAuthOptions = {
         t.name = u.name ?? null;
         t.slug = u.slug ?? null;
         t.image = u.image ?? null;
+        t.requiredTwoFactor = u.requiredTwoFactor ?? false;
       }
 
       if (account?.id_token) {
@@ -147,6 +152,7 @@ export const authOptions: NextAuthOptions = {
       if (!s.accessToken) s.error = "There is problem with our server.";
       s.roleId = t.roleId ?? null;
       s.role = t.role ?? null;
+      s.requiredTwoFactor = t.requiredTwoFactor ?? false;
       if (s.user) {
         s.user.name = t.name ?? s.user.name ?? null;
         s.user.image = t.image ?? s.user.image ?? null;

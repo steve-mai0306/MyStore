@@ -86,6 +86,22 @@ const BaseRequest = {
     apiClient.put(url, data, { showToast }),
   Delete: (url: string, showToast = true) =>
     apiClient.delete(url, { showToast }),
+  FormDataPut: (url: string, data: FormData, showToast = true) =>
+    apiClient.put(url, data, {
+      showToast,
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Accept: "*/*",
+      },
+    }),
+  FormDataPost: (url: string, data: FormData, showToast = true) =>
+    apiClient.post(url, data, {
+      showToast,
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Accept: "*/*",
+      },
+    }),
 };
 
 export default BaseRequest;

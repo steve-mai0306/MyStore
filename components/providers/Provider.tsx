@@ -6,6 +6,7 @@ import React from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { AppProgressProvider as ProgressProvider } from "@bprogress/next";
 import { SessionProvider } from "next-auth/react";
+import { UserProvider } from "./UserProvider";
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -20,12 +21,14 @@ function Providers({ children }: { children: React.ReactNode }) {
     <SessionProvider refetchOnWindowFocus={false}>
       <QueryClientProvider client={queryClient}>
         <ProgressProvider
-          height="3px"
+          height="4px"
           color="black"
           options={{ showSpinner: false }}
           shallowRouting
         >
-          {children}
+          <UserProvider>
+            {children}
+          </UserProvider>
           <ReactQueryDevtools initialIsOpen={false} />
         </ProgressProvider>
       </QueryClientProvider>

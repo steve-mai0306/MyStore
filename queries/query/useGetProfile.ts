@@ -1,4 +1,5 @@
-import { useQuery, QueryClient, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
+import { useUser } from "@/hooks/use-user";
 import BaseRequest from "@/config/axios-config";
 import "@bprogress/core/css";
 import { BProgress } from "@bprogress/core";
@@ -27,6 +28,8 @@ export type Profile = {
 };
 
 export const useGetProfile = (slug: string) => {
+  const { user } = useUser();
+
   return useQuery<Profile>({
     queryKey: ["profile", slug],
     enabled: Boolean(slug),
@@ -44,5 +47,10 @@ export const useGetProfile = (slug: string) => {
     },
     staleTime: 60000,
     refetchOnWindowFocus: false,
+    // Use store data if available and slug matches
+    initialData:
+      user?.slug === slug
+        ? ({ ...user, gender: user.gender?.toString() ?? null } as Profile)
+        : undefined,
   });
 };

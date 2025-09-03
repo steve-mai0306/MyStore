@@ -142,7 +142,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       }
     : undefined;
 
-  console.log("Session data:", session);
+  //console.log("Session data:", session);
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>

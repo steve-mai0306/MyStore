@@ -4,8 +4,6 @@ import * as React from "react";
 import VendorSidebarLayout from "@/app/(vendor)/layout/SidebarLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -20,43 +18,71 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { X, Upload, Plus } from "lucide-react";
-import { Separator } from "@/components/ui/separator";
-import Image from "next/image";
 import {
-  ImageCrop,
-  ImageCropApply,
-  ImageCropContent,
-  ImageCropReset,
-} from "@/components/ui/shadcn-io/image-crop";
-import { type ChangeEvent, useState } from "react";
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { X, Upload } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import Image from "next/image";
+import { type ChangeEvent, useState, useEffect } from "react";
+import { useGetCreateOptions } from "@/queries/query";
+import {
+  createProductSchema,
+  CreateProductValues,
+} from "@/types/entities/schemas/create-schema";
+import MultipleSelector from "@/components/ui/mutiple-selector";
+import { MinimalTiptap } from "@/components/ui/shadcn-io/minimal-tiptap";
+import { useCreateProduct } from "@/queries/mutation/useProduct";
+
+function formatThousand(value: number | string) {
+  if (value === null || value === undefined) return "";
+  const num = typeof value === "string" ? value.replace(/\D/g, "") : value;
+  return num ? Number(num).toLocaleString("en-US") : "";
+}
 
 export default function CreateProductPage() {
-  const [tags, setTags] = React.useState<string[]>([]);
-  const [newTag, setNewTag] = React.useState("");
-  const [images, setImages] = useState<string[]>([]);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [croppedImage, setCroppedImage] = useState<string | null>(null);
+  const [images, setImages] = useState<File[]>([]);
+
+  const { data: createOptions, isLoading } = useGetCreateOptions();
+  const createProductMutation = useCreateProduct();
+
+  const form = useForm<CreateProductValues>({
+    resolver: zodResolver(createProductSchema),
+    defaultValues: {
+      ProductName: "",
+      Quantity: 0,
+      Price: 0,
+      Description: "",
+      Status: 1,
+      CategoryId: undefined,
+      Images: [],
+      ColorId: [],
+      SizeId: [],
+      TagId: [],
+    },
+    shouldUnregister: true,
+  });
+
+  // Synchronize images state with form Images field
+  useEffect(() => {
+    form.setValue(
+      "Images",
+      images.map((file) => file.name)
+    );
+  }, [images, form]);
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file && images.length < 5) {
-      setSelectedFile(file);
-      setCroppedImage(null);
-    }
-  };
-
-  const handleReset = () => {
-    setSelectedFile(null);
-    setCroppedImage(null);
-  };
-
-  const addImageToGallery = (imageUrl: string) => {
-    if (images.length < 5) {
-      setImages((prev) => [...prev, imageUrl]);
-      setSelectedFile(null);
-      setCroppedImage(null);
+    if (file && images.length < 5 && file.type.startsWith("image/")) {
+      setImages((prev) => [...prev, file]);
     }
   };
 
@@ -64,21 +90,26 @@ export default function CreateProductPage() {
     setImages((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const addTag = () => {
-    if (newTag.trim() && !tags.includes(newTag.trim())) {
-      setTags((prev) => [...prev, newTag.trim()]);
-      setNewTag("");
-    }
-  };
+  // Form submit handler
+  const handleSubmit = form.handleSubmit((values) => {
+    const formData = new FormData();
+    formData.append("ProductName", values.ProductName);
+    formData.append("Quantity", String(values.Quantity));
+    formData.append("Price", String(values.Price));
+    formData.append("Description", values.Description);
+    formData.append("Status", String(values.Status));
+    if (values.CategoryId !== undefined)
+      formData.append("CategoryId", String(values.CategoryId));
+    images.forEach((file) => {
+      formData.append("Images", file);
+    });
+    // Multi-selects
+    values.ColorId?.forEach((id) => formData.append("ColorId", String(id)));
+    values.SizeId?.forEach((id) => formData.append("SizeId", String(id)));
+    values.TagId?.forEach((id) => formData.append("TagId", String(id)));
 
-  const removeTag = (tagToRemove: string) => {
-    setTags((prev) => prev.filter((tag) => tag !== tagToRemove));
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Form submitted");
-  };
+    createProductMutation.mutate(formData);
+  });
 
   return (
     <VendorSidebarLayout
@@ -88,269 +119,458 @@ export default function CreateProductPage() {
       ]}
     >
       <div className="w-full max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold my-3">Create New Product</h1>
-        <p className="text-muted-foreground">
-          Add a new product to your store inventory
-        </p>
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Basic Information */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Basic Information</CardTitle>
-              <CardDescription>
-                Essential details about your product
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="productName">Product Name *</Label>
-                  <Input
-                    id="productName"
-                    placeholder="Enter product name"
-                    required
+        <h1 className="text-3xl font-bold my-5">Create New Product</h1>
+        <Form {...form}>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Basic Information */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Basic Information</CardTitle>
+                <CardDescription>
+                  Essential details about your product
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="ProductName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Product Name *</FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            placeholder="Enter product name"
+                            required
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="Quantity"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Quantity *</FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            type="text"
+                            inputMode="numeric"
+                            required
+                            placeholder="0"
+                            value={field.value ?? ""}
+                            onChange={(e) => {
+                              const raw = e.target.value.replace(/\D/g, "");
+                              const num = raw === "" ? 0 : Number(raw);
+                              field.onChange(num);
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="quantity">Quantity *</Label>
-                  <Input
-                    id="quantity"
-                    type="number"
-                    placeholder="0"
-                    min="0"
-                    required
-                    onKeyDown={(e) => {
-                      if (e.key === "-" || e.key === "e") {
-                        e.preventDefault();
-                      }
-                    }}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="Price"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Price *</FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            type="text"
+                            inputMode="numeric"
+                            min={0}
+                            required
+                            placeholder="0"
+                            value={formatThousand(field.value)}
+                            onChange={(e) => {
+                              const raw = e.target.value.replace(/,/g, "");
+                              const num = Number(raw);
+                              if (!isNaN(num)) {
+                                field.onChange(num);
+                              }
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="CategoryId"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Category *</FormLabel>
+                        <Select
+                          value={field.value ? String(field.value) : ""}
+                          onValueChange={(val) => field.onChange(Number(val))}
+                          required
+                        >
+                          <FormControl>
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Select category" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {createOptions?.categories?.map(
+                              ({
+                                id,
+                                categoryName,
+                              }: {
+                                id: number;
+                                categoryName: string;
+                              }) => (
+                                <SelectItem key={id} value={String(id)}>
+                                  {categoryName}
+                                </SelectItem>
+                              )
+                            )}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
                   />
                 </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="price">Price *</Label>
-                  <Input
-                    id="price"
-                    type="number"
-                    step="0.01"
-                    placeholder="0.00"
-                    min="0"
-                    required
-                    onKeyDown={(e) => {
-                      if (e.key === "-" || e.key === "e") {
-                        e.preventDefault();
-                      }
-                    }}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="category">Category *</Label>
-                  <Select required>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="electronics">Electronics</SelectItem>
-                      <SelectItem value="clothing">Clothing</SelectItem>
-                      <SelectItem value="home">Home & Garden</SelectItem>
-                      <SelectItem value="sports">Sports & Outdoors</SelectItem>
-                      <SelectItem value="books">Books & Media</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="description">Description *</Label>
-                <Textarea
-                  id="description"
-                  placeholder="Describe your product in detail..."
-                  rows={4}
-                  className="h-[10rem]"
-                  required
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Product Images */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Product Images *</CardTitle>
-              <CardDescription>
-                Upload high-quality images of your product
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <>
-                {/* Display uploaded images */}
-                {images.map((image, index) => (
-                  <div key={index} className="relative group">
-                    <Image
-                      src={image}
-                      alt={`Product ${index + 1}`}
-                      width={200}
-                      height={200}
-                      sizes="100vw"
-                      quality={100}
-                      className="w-full h-fit object-cover rounded-lg border"
-                    />
-                    <Button
-                      type="button"
-                      variant="destructive"
-                      size="sm"
-                      className="absolute top-2 right-2  transition-opacity"
-                      onClick={() => removeImage(index)}
-                    >
-                      <X className="w-4 h-4" />
-                    </Button>
-                  </div>
-                ))}
-
-                {/* Upload area - only show if less than 5 images */}
-                {images.length < 5 && (
-                  <>
-                    {!selectedFile ? (
-                      <label className="w-full h-32 border-2 border-dashed border-muted-foreground/25 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-muted-foreground/50 transition-colors">
-                        <Upload className="w-8 h-8 text-muted-foreground mb-2" />
-                        <span className="text-sm text-muted-foreground">
-                          Upload Image ({images.length}/5)
-                        </span>
-                        <input
-                          type="file"
-                          accept="image/*"
-                          className="hidden"
-                          onChange={handleFileChange}
+                <FormField
+                  control={form.control}
+                  name="Description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Description *</FormLabel>
+                      <FormControl>
+                        <MinimalTiptap
+                          {...field}
+                          placeholder="Product description..."
+                          className="min-h-[400px]"
                         />
-                      </label>
-                    ) : (
-                      <ImageCrop
-                        aspect={1}
-                        file={selectedFile}
-                        maxImageSize={1024 * 1024} // 1MB
-                        onChange={console.log}
-                        onComplete={console.log}
-                        onCrop={addImageToGallery}
-                      >
-                        <ImageCropContent className="max-w-md" />
-                        <div className="flex items-center gap-2">
-                          <ImageCropApply asChild>
-                            <Button size="sm" variant="outline">
-                              Apply Crop
-                            </Button>
-                          </ImageCropApply>
-                          <ImageCropReset asChild>
-                            <Button size="sm" variant="outline">
-                              Reset
-                            </Button>
-                          </ImageCropReset>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </CardContent>
+            </Card>
+
+            {/* Product Images */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Product Images *</CardTitle>
+                <CardDescription>
+                  Upload high-quality images of your product
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <>
+                  {/* Display uploaded images in grid */}
+                  {images.length > 0 && (
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                      {images.map((image, index) => (
+                        <div
+                          key={index}
+                          className="relative group aspect-square"
+                        >
+                          <Image
+                            src={URL.createObjectURL(image)}
+                            alt={`Product ${index + 1}`}
+                            fill
+                            sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                            quality={100}
+                            className="object-cover rounded-lg border"
+                          />
                           <Button
-                            onClick={handleReset}
-                            size="sm"
                             type="button"
-                            variant="outline"
+                            variant="destructive"
+                            size="sm"
+                            className="absolute top-2 right-2"
+                            onClick={() => removeImage(index)}
                           >
-                            Start Over
+                            <X className="w-4 h-4" />
                           </Button>
                         </div>
-                      </ImageCrop>
-                    )}
-                  </>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Upload area - only show if less than 5 images */}
+                  {images.length < 5 && (
+                    <label className="w-full h-32 border-2 border-dashed border-muted-foreground/25 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-muted-foreground/50 transition-colors">
+                      <Upload className="w-8 h-8 text-muted-foreground mb-2" />
+                      <span className="text-sm text-muted-foreground">
+                        Upload Image ({images.length}/5)
+                      </span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={handleFileChange}
+                      />
+                    </label>
+                  )}
+                </>
+
+                {/* Show message when max images reached */}
+                {images.length >= 5 && (
+                  <p className="text-sm text-muted-foreground text-center">
+                    Maximum 5 images reached. Remove some images to add more.
+                  </p>
                 )}
-              </>
+              </CardContent>
+            </Card>
 
-              {/* Show message when max images reached */}
-              {images.length >= 5 && (
-                <p className="text-sm text-muted-foreground text-center">
-                  Maximum 5 images reached. Remove some images to add more.
-                </p>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Product Status & Tags */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Product Status & Tags</CardTitle>
-              <CardDescription>
-                Set product availability and add relevant tags
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="status">Status *</Label>
-                  <Select required>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="1">Active</SelectItem>
-                      <SelectItem value="0">Inactive</SelectItem>
-                      <SelectItem value="2">Draft</SelectItem>
-                      <SelectItem value="3">Out of Stock</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="categoryId">Category ID *</Label>
-                  <Input
-                    id="categoryId"
-                    type="number"
-                    placeholder="Enter category ID"
-                    required
+            {/* Product Status, Size, Color, Tags */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Product Specifications</CardTitle>
+                <CardDescription>
+                  Set product specs and add relevant tags
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <>
+                  <FormField
+                    control={form.control}
+                    name="Status"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Status *</FormLabel>
+                        <Select
+                          value={String(field.value)}
+                          onValueChange={(val) => field.onChange(Number(val))}
+                          required
+                        >
+                          <FormControl>
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Select status" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {/* map statuses from API */}
+                            {createOptions?.statuses?.map(
+                              ({
+                                id,
+                                status,
+                              }: {
+                                id: number;
+                                status: string;
+                              }) => (
+                                <SelectItem key={id} value={String(id)}>
+                                  {status}
+                                </SelectItem>
+                              )
+                            )}
+                          </SelectContent>
+                        </Select>
+                        <FormDescription>
+                          Status which appear to customers view
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
                   />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label>Tags</Label>
-                <div className="flex flex-wrap gap-2 mb-3">
-                  {tags.map((tag, index) => (
-                    <Badge key={index} variant="secondary" className="gap-1">
-                      {tag}
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        className="h-auto p-0 hover:bg-transparent"
-                        onClick={() => removeTag(tag)}
-                      >
-                        <X className="w-3 h-3" />
-                      </Button>
-                    </Badge>
-                  ))}
-                </div>
-                <div className="flex gap-2">
-                  <Input
-                    placeholder="Add a tag"
-                    value={newTag}
-                    onChange={(e) => setNewTag(e.target.value)}
-                    onKeyPress={(e) =>
-                      e.key === "Enter" && (e.preventDefault(), addTag())
-                    }
+                  {/* Size MultiSelector */}
+                  <FormField
+                    control={form.control}
+                    name="SizeId"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Sizes</FormLabel>
+                        <FormControl>
+                          <MultipleSelector
+                            badgeClassName="bg-muted text-foreground"
+                            options={
+                              createOptions?.sizes?.map(
+                                ({ id, productSize }) => ({
+                                  value: String(id),
+                                  label: productSize,
+                                })
+                              ) ?? []
+                            }
+                            value={(field.value ?? []).map((id) => {
+                              const size = createOptions?.sizes?.find(
+                                (s) => s.id === id
+                              );
+                              return size
+                                ? {
+                                    value: String(size.id),
+                                    label: size.productSize,
+                                  }
+                                : { value: String(id), label: String(id) };
+                            })}
+                            onChange={(
+                              selected: { value: string; label: string }[]
+                            ) =>
+                              field.onChange(
+                                selected.map((opt) => Number(opt.value))
+                              )
+                            }
+                            placeholder="Select sizes"
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          Set available sizes for the product
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
                   />
-                  <Button type="button" variant="outline" onClick={addTag}>
-                    <Plus className="w-4 h-4" />
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+                </>
+                <>
+                  {/* Color block multi-select */}
+                  <FormField
+                    control={form.control}
+                    name="ColorId"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Colors</FormLabel>
+                        <FormControl>
+                          <div>
+                            {/* Show skeleton if loading */}
+                            {isLoading ? (
+                              <div className="flex flex-wrap gap-2">
+                                {[...Array(6)].map((_, idx) => (
+                                  <Skeleton
+                                    key={idx}
+                                    className="w-8 h-8 rounded border-2 border-muted"
+                                  />
+                                ))}
+                              </div>
+                            ) : (
+                              <>
+                                <div className="flex flex-wrap gap-2">
+                                  {createOptions?.colors?.map(
+                                    ({ id, themeColor, hexValue }) => {
+                                      const selected =
+                                        field.value?.includes(id);
+                                      return (
+                                        <button
+                                          key={id}
+                                          type="button"
+                                          className={`w-8 h-8 rounded border-2 flex items-center justify-center transition
+                          ${selected ? "border-blue-500" : "border-muted"}
+                        `}
+                                          style={{ backgroundColor: hexValue }}
+                                          title={themeColor}
+                                          onClick={() => {
+                                            if (selected) {
+                                              field.onChange(
+                                                (field.value ?? []).filter(
+                                                  (v) => v !== id
+                                                )
+                                              );
+                                            } else {
+                                              field.onChange([
+                                                ...(field.value ?? []),
+                                                id,
+                                              ]);
+                                            }
+                                          }}
+                                        ></button>
+                                      );
+                                    }
+                                  )}
+                                </div>
+                                {/* Render selected colors below */}
+                                <div className="flex flex-wrap gap-2 mt-2">
+                                  {field.value?.map((id) => {
+                                    const color = createOptions?.colors?.find(
+                                      (c) => c.id === id
+                                    );
+                                    if (!color) return null;
+                                    return (
+                                      <div
+                                        key={id}
+                                        className="flex items-center gap-1"
+                                      >
+                                        <span
+                                          className="w-5 h-5 rounded-full border"
+                                          style={{
+                                            backgroundColor: color.hexValue,
+                                          }}
+                                          title={color.themeColor}
+                                        ></span>
+                                        <span className="text-xs">
+                                          {color.themeColor}
+                                        </span>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              </>
+                            )}
+                          </div>
+                        </FormControl>
+                        <FormDescription>
+                          Choose at least 1 or more colors available
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  {/* Tag MultiSelector */}
+                  <FormField
+                    control={form.control}
+                    name="TagId"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Tags</FormLabel>
+                        <FormControl>
+                          <MultipleSelector
+                            badgeClassName="bg-muted text-foreground"
+                            options={
+                              createOptions?.tags?.map(({ id, tagName }) => ({
+                                value: String(id),
+                                label: tagName,
+                              })) ?? []
+                            }
+                            value={(field.value ?? []).map((id) => {
+                              const tag = createOptions?.tags?.find(
+                                (t) => t.id === id
+                              );
+                              return tag
+                                ? { value: String(tag.id), label: tag.tagName }
+                                : { value: String(id), label: String(id) };
+                            })}
+                            onChange={(
+                              selected: { value: string; label: string }[]
+                            ) =>
+                              field.onChange(
+                                selected.map((opt) => Number(opt.value))
+                              )
+                            }
+                            placeholder="Select tags"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </>
+              </CardContent>
+            </Card>
 
-          <Separator />
-
-          {/* Form Actions */}
-          <div className="flex justify-end gap-4">
-            <Button type="button" variant="outline">
-              Save as Draft
-            </Button>
-            <Button type="submit">Create Product</Button>
-          </div>
-        </form>
+            {/* Form Actions */}
+            <div className="flex justify-end gap-4">
+              <Button type="button" variant="outline">
+                Save as Draft
+              </Button>
+              <Button type="submit" disabled={createProductMutation.isPending}>
+                {createProductMutation.isPending
+                  ? "Creating..."
+                  : "Create Product"}
+              </Button>
+            </div>
+          </form>
+        </Form>
       </div>
     </VendorSidebarLayout>
   );

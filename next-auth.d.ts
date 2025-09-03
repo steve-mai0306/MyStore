@@ -6,6 +6,7 @@ declare module "next-auth" {
     role?: string | null;
     roleId?: number | null;
     accountId?: string | number | null;
+    requiredTwoFactor?: boolean;
     error?: string;
     user: {
       id?: string;
@@ -21,6 +22,7 @@ declare module "next-auth" {
     role?: string | null;
     roleId?: number | null;
     accountId?: string | number | null;
+    requiredTwoFactor?: boolean;
   }
 }
 
@@ -30,5 +32,6 @@ declare module "next-auth/jwt" {
     role?: string | null;
     roleId?: number | null;
     accountId?: string | number | null;
+    requiredTwoFactor?: boolean;
   }
 }
