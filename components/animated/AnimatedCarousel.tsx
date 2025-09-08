@@ -166,8 +166,8 @@ export function AnimatedCarousel() {
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
       >
-        <div className="relative flex w-full flex-col rounded-3xl border border-white/10 dark:border-white/10 dark:bg-neutral-900 pt-6">
-          <div className="relative w-full h-[40rem] md:h-[70vh] flex items-center justify-center overflow-hidden pt-12">
+        <div className="relative flex w-full flex-col">
+          <div className="relative w-full h-[40rem] md:h-[60vh] flex items-center justify-center overflow-hidden">
             <motion.div
               className="w-full h-full flex items-center justify-center"
               drag="x"
@@ -250,7 +250,7 @@ function Card({ index, activeIndex, totalCards }: CardProps) {
       animate={animate}
       initial={false}
     >
-      <div className="relative w-full h-fit overflow-hidden bg-muted dark:bg-neutral-800">
+      <div className="relative w-full h-fit overflow-hidden bg-muted">
         <ProductCard />
       </div>
     </motion.div>

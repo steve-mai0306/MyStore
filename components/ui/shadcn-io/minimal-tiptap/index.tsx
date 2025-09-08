@@ -3,9 +3,9 @@
 import * as React from "react";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import BulletList from "@tiptap/extension-bullet-list";
-import OrderedList from "@tiptap/extension-ordered-list";
-import Blockquote from "@tiptap/extension-blockquote";
+import { BulletList as bulletList } from "@tiptap/extension-bullet-list";
+import { OrderedList as orderedList } from "@tiptap/extension-ordered-list";
+import { Blockquote as blockquote } from "@tiptap/extension-blockquote";
 import { Button } from "../../button";
 import { Separator } from "../../separator";
 import { Toggle } from "../../toggle";
@@ -44,17 +44,17 @@ function MinimalTiptap({
   const editor = useEditor({
     extensions: [
       StarterKit,
-      BulletList.configure({
+      bulletList.configure({
         HTMLAttributes: {
           class: "list-disc pl-6",
         },
       }),
-      OrderedList.configure({
+      orderedList.configure({
         HTMLAttributes: {
           class: "list-decimal pl-6",
         },
       }),
-      Blockquote.configure({
+      blockquote.configure({
         HTMLAttributes: {
           class: "mt-6 border-l-2 pl-6 italic",
         },

@@ -152,7 +152,7 @@ export const ProductCard = () => {
           </h2>
         </Link>
         <div className="mt-2">
-          <span className="text-lg font-semibold text-gray-900">
+          <span className="text-lg font-semibold">
             $23.00 - $33.00
           </span>
         </div>

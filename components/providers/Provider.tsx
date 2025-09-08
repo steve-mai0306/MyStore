@@ -1,12 +1,18 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import React from "react";
 import { Toaster } from "@/components/ui/sonner";
-import { AppProgressProvider as ProgressProvider } from "@bprogress/next";
 import { SessionProvider } from "next-auth/react";
 import { UserProvider } from "./UserProvider";
+
+
+const ProgressProvider = dynamic(
+  () => import("@bprogress/next").then((m) => m.AppProgressProvider),
+  { ssr: false }
+);
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -21,8 +27,8 @@ function Providers({ children }: { children: React.ReactNode }) {
     <SessionProvider refetchOnWindowFocus={false}>
       <QueryClientProvider client={queryClient}>
         <ProgressProvider
-          height="4px"
-          color="black"
+          height="3px"
+          color="#0A2FFF"
           options={{ showSpinner: false }}
           shallowRouting
         >

@@ -41,15 +41,14 @@ import {
 import MultipleSelector from "@/components/ui/mutiple-selector";
 import { MinimalTiptap } from "@/components/ui/shadcn-io/minimal-tiptap";
 import { useCreateProduct } from "@/queries/mutation/useProduct";
+import { useRouter } from "next/navigation";
+import { VendorWrapper } from "@/app/(vendor)/_components";
 
-function formatThousand(value: number | string) {
-  if (value === null || value === undefined) return "";
-  const num = typeof value === "string" ? value.replace(/\D/g, "") : value;
-  return num ? Number(num).toLocaleString("en-US") : "";
-}
+var formatThousands = require("format-thousands");
 
 export default function CreateProductPage() {
   const [images, setImages] = useState<File[]>([]);
+  const router = useRouter();
 
   const { data: createOptions, isLoading } = useGetCreateOptions();
   const createProductMutation = useCreateProduct();
@@ -67,6 +66,7 @@ export default function CreateProductPage() {
       ColorId: [],
       SizeId: [],
       TagId: [],
+      SKU: "",
     },
     shouldUnregister: true,
   });
@@ -100,6 +100,7 @@ export default function CreateProductPage() {
     formData.append("Status", String(values.Status));
     if (values.CategoryId !== undefined)
       formData.append("CategoryId", String(values.CategoryId));
+    if (values.SKU) formData.append("SKU", values.SKU);
     images.forEach((file) => {
       formData.append("Images", file);
     });
@@ -108,7 +109,13 @@ export default function CreateProductPage() {
     values.SizeId?.forEach((id) => formData.append("SizeId", String(id)));
     values.TagId?.forEach((id) => formData.append("TagId", String(id)));
 
-    createProductMutation.mutate(formData);
+    createProductMutation.mutate(formData, {
+      onSuccess: () => {
+        form.reset();
+        setImages([]);
+        router.push("/vendor/products");
+      },
+    });
   });
 
   return (
@@ -118,7 +125,7 @@ export default function CreateProductPage() {
         { label: "Create Product" },
       ]}
     >
-      <div className="w-full max-w-4xl mx-auto">
+      <VendorWrapper>
         <h1 className="text-3xl font-bold my-5">Create New Product</h1>
         <Form {...form}>
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -131,7 +138,7 @@ export default function CreateProductPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
                   <FormField
                     control={form.control}
                     name="ProductName"
@@ -175,7 +182,7 @@ export default function CreateProductPage() {
                     )}
                   />
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
                   <FormField
                     control={form.control}
                     name="Price"
@@ -190,12 +197,27 @@ export default function CreateProductPage() {
                             min={0}
                             required
                             placeholder="0"
-                            value={formatThousand(field.value)}
+                            value={formatThousands(field.value, {
+                              separator: ",",
+                            })}
                             onChange={(e) => {
                               const raw = e.target.value.replace(/,/g, "");
                               const num = Number(raw);
                               if (!isNaN(num)) {
                                 field.onChange(num);
+                              }
+                            }}
+                            onKeyDown={(e) => {
+                              const allowed = [
+                                "Backspace",
+                                "Delete",
+                                "ArrowLeft",
+                                "ArrowRight",
+                                "Tab",
+                              ];
+                              if (allowed.includes(e.key)) return;
+                              if (!/\d/.test(e.key)) {
+                                e.preventDefault();
                               }
                             }}
                           />
@@ -275,10 +297,7 @@ export default function CreateProductPage() {
                   {images.length > 0 && (
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                       {images.map((image, index) => (
-                        <div
-                          key={index}
-                          className="relative group aspect-square"
-                        >
+                        <div key={index} className="relative group aspect-3/4">
                           <Image
                             src={URL.createObjectURL(image)}
                             alt={`Product ${index + 1}`}
@@ -377,13 +396,34 @@ export default function CreateProductPage() {
                       </FormItem>
                     )}
                   />
+                  {/* SKU field */}
+                  <FormField
+                    control={form.control}
+                    name="SKU"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>SKU</FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            placeholder="Stock Keeping Unit (optional)"
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          SKU is optional, our system will auto-generate one if
+                          left blank
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                   {/* Size MultiSelector */}
                   <FormField
                     control={form.control}
                     name="SizeId"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Sizes</FormLabel>
+                        <FormLabel>Sizes *</FormLabel>
                         <FormControl>
                           <MultipleSelector
                             badgeClassName="bg-muted text-foreground"
@@ -431,7 +471,7 @@ export default function CreateProductPage() {
                     name="ColorId"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Colors</FormLabel>
+                        <FormLabel>Colors *</FormLabel>
                         <FormControl>
                           <div>
                             {/* Show skeleton if loading */}
@@ -522,7 +562,7 @@ export default function CreateProductPage() {
                     name="TagId"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Tags</FormLabel>
+                        <FormLabel>Tags *</FormLabel>
                         <FormControl>
                           <MultipleSelector
                             badgeClassName="bg-muted text-foreground"
@@ -571,7 +611,7 @@ export default function CreateProductPage() {
             </div>
           </form>
         </Form>
-      </div>
+      </VendorWrapper>
     </VendorSidebarLayout>
   );
 }

@@ -5,6 +5,7 @@ import { Header, Footer } from "@/components/layout";
 import Providers from "@/components/providers/Provider";
 import { Suspense } from "react";
 import { Spinner } from "@/components/styled";
+import { ThemeProvider } from "next-themes";
 
 const bricolage = Bricolage_Grotesque({
   variable: "--font-bricolage",
@@ -23,18 +24,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        suppressHydrationWarning
-        className={`${bricolage.variable} antialiased`}
-      >
-        <Suspense fallback={<Spinner />}>
-          <Providers>
-            <Header hiddenAt={["/setup-password", "/vendor"]}  />
-            {children}
-            <Footer hiddenAt={["/setup-password", "/vendor"]} />
-          </Providers>
-        </Suspense>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${bricolage.variable} antialiased`}>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <Suspense fallback={<Spinner />}>
+            <Providers>
+              <Header hiddenAt={["/setup-password", "/vendor"]} />
+              {children}
+              <Footer hiddenAt={["/setup-password", "/vendor"]} />
+            </Providers>
+          </Suspense>
+        </ThemeProvider>
       </body>
     </html>
   );

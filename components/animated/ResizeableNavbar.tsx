@@ -41,6 +41,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 
 import { Button } from "../ui";
+import { useTheme } from "next-themes";
 
 interface NavbarProps {
   children: React.ReactNode;
@@ -139,7 +140,7 @@ export const NavBody = ({
       animate={{
         backdropFilter: visible ? "blur(10px)" : "none",
         boxShadow: visible
-          ? "0 0 24px rgba(34, 42, 53, 0.06), 0 1px 1px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(34, 42, 53, 0.04), 0 0 4px rgba(34, 42, 53, 0.08), 0 16px 68px rgba(47, 48, 55, 0.05), 0 1px 0 rgba(255, 255, 255, 0.1) inset"
+          ? "0 0 48px rgba(34, 42, 53, 0.12), 0 2px 4px rgba(0, 0, 0, 0.10), 0 0 0 2px rgba(34, 42, 53, 0.08), 0 0 8px rgba(34, 42, 53, 0.16), 0 32px 136px rgba(47, 48, 55, 0.10), 0 2px 0 rgba(255, 255, 255, 0.2) inset"
           : "none",
         width: visible ? "70%" : "100%",
         y: visible ? 20 : 0,
@@ -404,7 +405,7 @@ export const MobileNav = ({ children, className, visible }: MobileNavProps) => {
       animate={{
         backdropFilter: visible ? "blur(10px)" : "none",
         boxShadow: visible
-          ? "0 0 24px rgba(34, 42, 53, 0.06), 0 1px 1px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(34, 42, 53, 0.04), 0 0 4px rgba(34, 42, 53, 0.08), 0 16px 68px rgba(47, 48, 55, 0.05), 0 1px 0 rgba(255, 255, 255, 0.1) inset"
+          ? "0 0 48px rgba(34, 42, 53, 0.12), 0 2px 4px rgba(0, 0, 0, 0.10), 0 0 0 2px rgba(34, 42, 53, 0.08), 0 0 8px rgba(34, 42, 53, 0.16), 0 32px 136px rgba(47, 48, 55, 0.10), 0 2px 0 rgba(255, 255, 255, 0.2) inset"
           : "none",
         width: visible ? "90%" : "100%",
         paddingRight: visible ? "12px" : "0px",
@@ -483,10 +484,21 @@ export const MobileNavToggle = ({
 };
 
 export const NavbarLogo = () => {
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const lightLogo = "/assets/new-my-store-logo.png";
+  const darkLogo = "/assets/new-my-store-logo-dark.png";
+  const logoSrc = mounted && resolvedTheme === "dark" ? darkLogo : lightLogo;
+
   return (
     <Link href="/" className="w-[25%]">
       <Image
-        src="/assets/my-store-logo.png"
+        src={logoSrc}
         alt="logo"
         width={70}
         height={70}
