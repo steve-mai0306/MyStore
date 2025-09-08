@@ -43,13 +43,11 @@ import { MinimalTiptap } from "@/components/ui/shadcn-io/minimal-tiptap";
 import { useCreateProduct } from "@/queries/mutation/useProduct";
 import { useRouter } from "next/navigation";
 import { VendorWrapper } from "@/app/(vendor)/_components";
-
-var formatThousands = require("format-thousands");
+import { NumericFormat } from "react-number-format";
 
 export default function CreateProductPage() {
   const [images, setImages] = useState<File[]>([]);
   const router = useRouter();
-
   const { data: createOptions, isLoading } = useGetCreateOptions();
   const createProductMutation = useCreateProduct();
 
@@ -190,35 +188,17 @@ export default function CreateProductPage() {
                       <FormItem>
                         <FormLabel>Price *</FormLabel>
                         <FormControl>
-                          <Input
-                            {...field}
-                            type="text"
-                            inputMode="numeric"
-                            min={0}
-                            required
+                          <NumericFormat
+                            value={field.value ?? ""}
+                            thousandSeparator=","
+                            allowNegative={false}
+                            allowLeadingZeros={false}
+                            decimalScale={0}
+                            customInput={Input}
                             placeholder="0"
-                            value={formatThousands(field.value, {
-                              separator: ",",
-                            })}
-                            onChange={(e) => {
-                              const raw = e.target.value.replace(/,/g, "");
-                              const num = Number(raw);
-                              if (!isNaN(num)) {
-                                field.onChange(num);
-                              }
-                            }}
-                            onKeyDown={(e) => {
-                              const allowed = [
-                                "Backspace",
-                                "Delete",
-                                "ArrowLeft",
-                                "ArrowRight",
-                                "Tab",
-                              ];
-                              if (allowed.includes(e.key)) return;
-                              if (!/\d/.test(e.key)) {
-                                e.preventDefault();
-                              }
+                            required
+                            onValueChange={(values) => {
+                              field.onChange(values.floatValue ?? 0);
                             }}
                           />
                         </FormControl>

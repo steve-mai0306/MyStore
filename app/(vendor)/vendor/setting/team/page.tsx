@@ -162,7 +162,7 @@ export default function VendorTeamSettingsPage() {
                   </div>
                 ))}
               </div>
-              <p className="text-sm text-muted-foreground my-3">You can log out the employees from your store's website.</p>
+              <p className="text-sm text-muted-foreground my-3">You can log out the employees from your store&#39;s website.</p>
               <>
                 <Button variant="outline" size="sm">
                   End all login sessions

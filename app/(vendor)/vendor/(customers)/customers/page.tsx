@@ -10,7 +10,7 @@ import { useUserStore } from "@/store/useUserStore"
 import Link from "next/link"
 
 // Dummy hook for demonstration; replace with your actual data fetching logic
-function useGetCustomersByVendor(params: any, options: any) {
+function useGetCustomersByVendor() {
   // ...replace with actual implementation...
   return { data: { data: [] }, isLoading: false }
 }
@@ -27,7 +27,7 @@ export default function CustomersPage() {
     [slug]
   )
 
-  const { data, isLoading } = useGetCustomersByVendor(params, { enabled: !!slug })
+  const { data, isLoading } = useGetCustomersByVendor()
 
   return (
     <VendorSidebarLayout>

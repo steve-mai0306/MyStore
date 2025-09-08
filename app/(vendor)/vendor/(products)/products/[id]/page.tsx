@@ -41,9 +41,9 @@ import {
   createProductSchema,
   CreateProductValues,
 } from "@/types/entities/schemas/create-schema";
-// import { useUpdateProduct } from "@/queries/mutation/useProduct"; // implement your own update mutation
+import { NumericFormat } from 'react-number-format';
 
-var formatThousands = require("format-thousands");
+// import { useUpdateProduct } from "@/queries/mutation/useProduct"; // implement your own update mutation
 
 export default function ProductDetailPage() {
   const params = useParams();
@@ -266,45 +266,17 @@ export default function ProductDetailPage() {
                       <FormItem>
                         <FormLabel>Price *</FormLabel>
                         <FormControl>
-                          <Input
-                            {...field}
-                            type="text"
-                            inputMode="numeric"
-                            min={0}
-                            required
+                          <NumericFormat
+                            value={field.value ?? ""}
+                            thousandSeparator="," 
+                            allowNegative={false}
+                            allowLeadingZeros={false}
+                            decimalScale={0}
+                            customInput={Input}
                             placeholder="0"
-                            value={
-                              field.value === undefined || field.value === null
-                                ? ""
-                                : formatThousands(field.value, {
-                                    separator: ",",
-                                  })
-                            }
-                            onChange={(e) => {
-                              const raw = e.target.value
-                                .replace(/,/g, "")
-                                .replace(/\s/g, "");
-                              if (raw === "") {
-                                field.onChange(undefined);
-                                return;
-                              }
-                              const num = Number(raw);
-                              if (!isNaN(num)) {
-                                field.onChange(num);
-                              }
-                            }}
-                            onKeyDown={(e) => {
-                              const allowed = [
-                                "Backspace",
-                                "Delete",
-                                "ArrowLeft",
-                                "ArrowRight",
-                                "Tab",
-                              ];
-                              if (allowed.includes(e.key)) return;
-                              if (!/\d/.test(e.key)) {
-                                e.preventDefault();
-                              }
+                            required
+                            onValueChange={(values) => {
+                              field.onChange(values.floatValue ?? 0);
                             }}
                           />
                         </FormControl>

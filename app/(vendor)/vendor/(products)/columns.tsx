@@ -29,6 +29,71 @@ import {
 import Link from "next/link";
 import { Product } from "@/types";
 
+function ProductActions({ product }: { product: Product }) {
+  const deleteProductMutation = useDeleteProduct();
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" className="h-8 w-8 p-0">
+            <span className="sr-only">Open menu</span>
+            <MoreHorizontal className="h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+          <DropdownMenuItem
+            onClick={() => navigator.clipboard.writeText(`${product.id}`)}
+          >
+            Copy product ID
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem>View orders</DropdownMenuItem>
+          <Link href={`/vendor/products/${product.id}`}>
+            <DropdownMenuItem>View product details</DropdownMenuItem>
+          </Link>
+          <DropdownMenuItem
+            className="bg-destructive hover:!bg-destructive/90 text-white hover:!text-white"
+            disabled={deleteProductMutation.isPending}
+            onClick={() => setOpen(true)}
+          >
+            <Trash color="white" />
+            Delete
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Product</DialogTitle>
+          </DialogHeader>
+          <div>
+            Are you sure you want to delete <b>{product.productName}</b>? This action cannot be undone.
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              disabled={deleteProductMutation.isPending}
+              onClick={() => {
+                deleteProductMutation.mutate(product.id, {
+                  onSuccess: () => setOpen(false),
+                });
+              }}
+            >
+              {deleteProductMutation.isPending ? "Deleting..." : "Delete"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+}
+
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 
@@ -142,72 +207,6 @@ export const columns: ColumnDef<Product>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => {
-      const product = row.original;
-      const deleteProductMutation = useDeleteProduct();
-      const [open, setOpen] = useState(false);
-
-      return (
-        <>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem
-                onClick={() => navigator.clipboard.writeText(`${product.id}`)}
-              >
-                Copy product ID
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>View orders</DropdownMenuItem>
-              <Link href={`/vendor/products/${product.id}`}>
-                <DropdownMenuItem>View product details</DropdownMenuItem>
-              </Link>
-
-              <DropdownMenuItem
-                className="bg-destructive hover:!bg-destructive/90 text-white hover:!text-white"
-                disabled={deleteProductMutation.isPending}
-                onClick={() => setOpen(true)}
-              >
-                <Trash color="white" />
-                Delete
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <Dialog open={open} onOpenChange={setOpen}>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Delete Product</DialogTitle>
-              </DialogHeader>
-              <div>
-                Are you sure you want to delete <b>{product.productName}</b>?
-                This action cannot be undone.
-              </div>
-              <DialogFooter>
-                <Button variant="outline" onClick={() => setOpen(false)}>
-                  Cancel
-                </Button>
-                <Button
-                  variant="destructive"
-                  disabled={deleteProductMutation.isPending}
-                  onClick={() => {
-                    deleteProductMutation.mutate(product.id, {
-                      onSuccess: () => setOpen(false),
-                    });
-                  }}
-                >
-                  {deleteProductMutation.isPending ? "Deleting..." : "Delete"}
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        </>
-      );
-    },
+    cell: ({ row }) => <ProductActions product={row.original} />,
   },
 ];
