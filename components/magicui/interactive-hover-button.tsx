@@ -22,10 +22,10 @@ export const InteractiveHoverButton = React.forwardRef<
       <button
         ref={ref}
         className={cn(
-          "relative w-auto overflow-hidden rounded-full border border-black p-1.5 sm:p-2 px-4 sm:px-6 text-center font-semibold",
+          "relative w-auto overflow-hidden rounded-full border border-black dark:border-white p-1.5 sm:p-2 px-4 sm:px-6 text-center font-semibold",
           loading || props.disabled
-            ? "bg-background cursor-not-allowed opacity-70"
-            : "group bg-background hover:bg-black cursor-pointer",
+            ? "bg-background dark:bg-neutral-900 cursor-not-allowed opacity-70"
+            : "group bg-background dark:bg-neutral-900 hover:bg-black dark:hover:bg-white hover:text-white dark:hover:text-black cursor-pointer",
           className
         )}
         disabled={Boolean(props.disabled) || Boolean(loading)}

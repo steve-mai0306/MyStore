@@ -2,8 +2,7 @@
 
 import * as React from "react";
 import {
-  BookOpen,
-  Bot,
+  Users,
   Frame,
   Package,
   Map,
@@ -25,6 +24,7 @@ import {
 } from "@/components/ui/sidebar";
 import { useSession } from "next-auth/react";
 import { signOut } from "next-auth/react";
+import { usePathname } from "next/navigation";
 
 // This is sample data.
 const data = {
@@ -65,16 +65,16 @@ const data = {
       ],
     },
     {
-      title: "Documentation",
+      title: "Customers",
       url: "#",
-      icon: BookOpen,
+      icon: Users,
       items: [
         {
-          title: "Introduction",
-          url: "#",
+          title: "All customers",
+          url: "/vendor/customers",
         },
         {
-          title: "Get Started",
+          title: "Group customers",
           url: "#",
         },
         {
@@ -94,19 +94,19 @@ const data = {
       items: [
         {
           title: "General",
-          url: "#",
+          url: "/vendor/setting/general",
         },
         {
           title: "Team",
-          url: "#",
+          url: "/vendor/setting/team",
         },
         {
           title: "Billing",
-          url: "#",
+          url: "/vendor/setting/billing",
         },
         {
           title: "Limits",
-          url: "#",
+          url: "/vendor/setting/limits",
         },
       ],
     },
@@ -132,13 +132,14 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { data: session } = useSession();
+  const pathname = usePathname();
 
   const user = session?.user
     ? {
         name: session.user.name ?? "Unknown",
         email: session.user.email ?? "No email",
         avatar: session.user.image ?? "",
-        slug: session.user.slug ?? "unknown-slug", 
+        slug: session.user.slug ?? "unknown-slug",
       }
     : undefined;
 
@@ -146,10 +147,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
-        <DashBoardLogo logo="/assets/my-store-logo.png" />
+        <DashBoardLogo />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain items={data.navMain} pathname={pathname} />
         <NavProjects projects={data.projects} />
       </SidebarContent>
       <SidebarFooter>

@@ -18,10 +18,33 @@ export const useCreateProduct = () => {
       BProgress.done();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["product-list"] });
+      queryClient.invalidateQueries({ queryKey: ["getProductByVendor"] });
     },
     onError: (error) => {
       console.error("Error creating product:", error);
     },
   });
 };
+
+export const useDeleteProduct = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: number) => {
+      return BaseRequest.Delete(`${SUB_URL}/deleteProduct/${id}`);
+    },
+    onMutate: () => {
+      BProgress.start();
+    },
+    onSettled: () => {
+      BProgress.done();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["getProductByVendor"] });
+    },
+    onError: (error) => {
+      console.error("Error deleting product:", error);
+    },
+  });
+};
+
+

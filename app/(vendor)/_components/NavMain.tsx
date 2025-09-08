@@ -2,7 +2,6 @@
 
 import { ChevronRight, type LucideIcon } from "lucide-react"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
 
 import {
   Collapsible,
@@ -22,6 +21,7 @@ import {
 
 export function NavMain({
   items,
+  pathname,
 }: {
   items: {
     title: string
@@ -32,17 +32,17 @@ export function NavMain({
       title: string
       url: string
     }[]
-  }[]
+  }[],
+  pathname: string // <-- add pathname to props
 }) {
-  const pathname = usePathname();
-
   // Function to check if a tab should be open based on current URL
   const isTabOpen = (item: typeof items[0]) => {
-    // Check if current pathname matches any of the item's sub-items URLs
     if (item.items) {
-      return item.items.some(subItem => pathname === subItem.url);
+      // Open tab if pathname starts with any subItem url (excluding "#")
+      return item.items.some(
+        subItem => subItem.url !== "#" && pathname.startsWith(subItem.url)
+      );
     }
-    // Check if current pathname matches the main item URL
     return pathname === item.url;
   };
 
@@ -71,7 +71,10 @@ export function NavMain({
                     <SidebarMenuSubItem key={subItem.title}>
                       <SidebarMenuSubButton 
                         asChild 
-                        isActive={pathname === subItem.url}
+                        isActive={
+                          subItem.url !== "#" &&
+                          pathname.startsWith(subItem.url)
+                        }
                       >
                         <Link href={subItem.url}>
                           <span>{subItem.title}</span>
@@ -88,3 +91,4 @@ export function NavMain({
     </SidebarGroup>
   )
 }
+

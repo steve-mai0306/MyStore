@@ -75,6 +75,7 @@
     "react-dom": "19.1.0",
     "react-hook-form": "^7.61.1",
     "react-image-crop": "^11.0.10",
+    "react-number-format": "^5.4.4",
     "sonner": "^2.0.7",
     "swiper": "^11.2.10",
     "tailwind-merge": "^3.3.1",

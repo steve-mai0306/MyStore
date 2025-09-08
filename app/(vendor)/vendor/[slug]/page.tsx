@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useParams, notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import VendorSidebarLayout from "../../layout/SidebarLayout";
@@ -15,49 +15,146 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { Switch } from "@/components/ui/switch";
-import { Star, MapPin, Edit3, Save, X, Upload } from "lucide-react";
+import { Settings, Camera } from "lucide-react";
 import { useGetProfile } from "@/queries/query";
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
+import {
+  profileUpdateSchema,
+  type ProfileUpdateValues,
+  profileAvatarSchema,
+} from "@/types/entities/schemas/profile-schema";
+import { ZodError } from "zod";
+import {
+  useUpdateAvatar,
+  useUpdateProfile,
+} from "@/queries/mutation/useUpdateUser";
+import { Calendar } from "@/components/ui/calendar";
+import { ChevronDownIcon } from "lucide-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function VendorDashboardPage() {
   const { slug } = useParams<{ slug: string }>();
-  const [isEditing, setIsEditing] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const [open, setOpen] = useState(false);
 
   const { data: vendor, isLoading } = useGetProfile(slug);
+  const updateAvatarMutation = useUpdateAvatar();
+  const updateProfileMutation = useUpdateProfile();
 
   if (!isLoading && !vendor) {
     notFound();
   }
 
-  const [vendorData, setVendorData] = useState({
-    name: "Bella's Fashion Boutique",
-    slug: slug,
-    description:
-      "Curating timeless elegance with contemporary flair. Specializing in premium women's fashion, from casual chic to formal sophistication.",
-    avatar: "/fashion-boutique-owner.png",
-    rating: 4.8,
-    reviewCount: 247,
-    location: "Downtown Fashion District, NYC",
-    phone: "+1 (555) 123-4567",
-    email: "hello@bellasfashion.com",
-    hours: "Mon-Sat: 10AM-8PM, Sun: 12PM-6PM",
-    isActive: true,
-    acceptingOrders: true,
+  // Form setup
+  const form = useForm<ProfileUpdateValues>({
+    resolver: zodResolver(profileUpdateSchema),
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      phoneNumber: "",
+      slug: "",
+      dateOfBirth: "",
+      gender: undefined,
+    },
   });
 
-  const handleSave = () => {
-    setIsEditing(false);
-    console.log("[v0] Saving vendor data:", vendorData);
+  // Reset form when vendor data changes
+  useEffect(() => {
+    if (vendor) {
+      form.reset({
+        firstName: vendor.firstName ?? "",
+        lastName: vendor.lastName ?? "",
+        email: vendor.email ?? "",
+        phoneNumber: vendor.phoneNumber ?? "",
+        slug: vendor.slug ?? "",
+        dateOfBirth: vendor.dateOfBirth
+          ? vendor.dateOfBirth.slice(0, 10) // Ensure YYYY-MM-DD format
+          : "",
+        gender:
+          vendor.gender === undefined
+            ? undefined
+            : vendor.gender === "true"
+            ? true
+            : vendor.gender === "false"
+            ? false
+            : undefined,
+      });
+    }
+  }, [vendor, form]);
+
+  const onProfileSubmit = async (data: ProfileUpdateValues) => {
+    try {
+      await updateProfileMutation.mutateAsync({
+        ...data,
+        slug,
+      });
+      setDialogOpen(false);
+    } catch (error) {
+      toast.error("Failed to update profile");
+    }
   };
 
-  const handleCancel = () => {
-    setIsEditing(false);
-  };
+  const [selectedAvatar, setSelectedAvatar] = useState<File | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
 
-  const updateVendorData = (field: keyof typeof vendorData, value: string | boolean) => {
-    setVendorData((prev) => ({ ...prev, [field]: value }));
+  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      try {
+        await profileAvatarSchema.parseAsync({ file });
+        setSelectedAvatar(file);
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          const result = ev.target?.result as string;
+          if (result) setAvatarPreview(result);
+        };
+        reader.readAsDataURL(file);
+      } catch (error) {
+        if (error instanceof ZodError) {
+          toast.error(error.issues[0]?.message || "Invalid file");
+        } else {
+          toast.error("Failed to validate file");
+        }
+        e.target.value = "";
+      }
+    }
   };
 
   // Show loading state while fetching data
@@ -162,94 +259,275 @@ export default function VendorDashboardPage() {
         <Card className="border-none shadow-none mt-3">
           <CardContent className="p-6">
             <div className="flex flex-col md:flex-row items-center text-center md:text-left gap-6">
-              <div className="relative">
-                <Avatar className="h-24 w-24 border-4 border-border shadow-lg">
-                  <AvatarImage
-                    src={vendorData.avatar || "/placeholder.svg"}
-                    alt={vendorData.name}
-                  />
-                  <AvatarFallback className="text-2xl font-bold">
-                    BF
-                  </AvatarFallback>
-                </Avatar>
-                {isEditing && (
-                  <Button
-                    size="sm"
-                    variant="secondary"
-                    className="absolute -bottom-2 -right-2 h-8 w-8 p-0"
-                  >
-                    <Upload className="h-3 w-3" />
-                  </Button>
-                )}
-              </div>
-
-              <div className="flex-1">
-                {isEditing ? (
-                  <Input
-                    value={vendorData.name}
-                    onChange={(e) => updateVendorData("name", e.target.value)}
-                    className="text-2xl font-bold mb-2"
-                  />
-                ) : (
-                  <h1 className="text-2xl font-bold mb-2">
-                    {vendor?.lastName} {vendor?.firstName}{" "}
-                  </h1>
-                )}
-
-                <div className="flex flex-col items-center md:items-start gap-3 text-sm mb-4">
-                  <div className="flex items-center gap-1">
-                    <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                    <span className="font-medium">{vendorData.rating}</span>
-                    <span className="opacity-90">
-                      ({vendorData.reviewCount} reviews)
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <MapPin className="h-4 w-4" />
-                    {isEditing ? (
-                      <Input
-                        value={vendorData.location}
-                        onChange={(e) =>
-                          updateVendorData("location", e.target.value)
+              <div className="relative group">
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  id="vendor-avatar-upload"
+                  onChange={handleAvatarChange}
+                />
+                <label
+                  htmlFor="vendor-avatar-upload"
+                  className="cursor-pointer block"
+                >
+                  <span className="relative block">
+                    <Avatar className="h-24 w-24">
+                      <AvatarImage
+                        src={
+                          avatarPreview || vendor?.avatar || "/placeholder.svg"
                         }
-                        className="text-sm h-6 w-48"
+                        alt={vendor?.shopName || vendor?.slug}
                       />
-                    ) : (
-                      <span className="opacity-90">{vendorData.location}</span>
-                    )}
-                  </div>
+                      <AvatarFallback className="text-2xl font-bold">
+                        {vendor?.shopName?.charAt(0) || "V"}
+                      </AvatarFallback>
+                    </Avatar>
+                    {/* Camera icon overlay, only visible on hover */}
+                    <span className="absolute inset-0 flex items-center justify-center rounded-full bg-black/50 opacity-0 hover:opacity-100 transition-opacity duration-200">
+                      <Camera size={32} color="white" />
+                    </span>
+                  </span>
+                </label>
+              </div>
+              {selectedAvatar && (
+                <div className="flex flex-col items-center gap-2 mt-2">
+                  <Button
+                    onClick={async () => {
+                      try {
+                        if (selectedAvatar) {
+                          await updateAvatarMutation.mutateAsync({
+                            file: selectedAvatar,
+                          });
+                          // Optionally refetch vendor data here
+                          setSelectedAvatar(null);
+                          setAvatarPreview(null);
+                        }
+                      } catch (error) {
+                        toast.error("Failed to update avatar");
+                      }
+                    }}
+                    size="default"
+                    disabled={updateAvatarMutation.isPending}
+                  >
+                    {updateAvatarMutation.isPending ? "Updating..." : "Update"}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="default"
+                    onClick={() => {
+                      setSelectedAvatar(null);
+                      setAvatarPreview(null);
+                    }}
+                  >
+                    Cancel
+                  </Button>
                 </div>
-
+              )}
+              <div className="flex-1">
+                <h1 className="text-2xl font-bold mb-2">
+                  {vendor?.lastName} {vendor?.firstName}
+                </h1>
                 <div className="flex gap-2">
-                  {isEditing ? (
-                    <>
+                  <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                    <DialogTrigger asChild>
                       <Button
                         variant="secondary"
                         size="sm"
-                        onClick={handleSave}
+                        onClick={() => setDialogOpen(true)}
                       >
-                        <Save className="h-4 w-4 mr-2" />
-                        Save
+                        <Settings className="h-4 w-4 mr-2" />
+                        Edit Profile
                       </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={handleCancel}
-                      >
-                        <X className="h-4 w-4 mr-2" />
-                        Cancel
-                      </Button>
-                    </>
-                  ) : (
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      onClick={() => setIsEditing(true)}
-                    >
-                      <Edit3 className="h-4 w-4 mr-2" />
-                      Edit Profile
-                    </Button>
-                  )}
+                    </DialogTrigger>
+                    <DialogContent ref={dialogRef} className="sm:max-w-[40rem]">
+                      <Form {...form}>
+                        <form onSubmit={form.handleSubmit(onProfileSubmit)}>
+                          <DialogHeader>
+                            <DialogTitle>Edit Vendor Profile</DialogTitle>
+                            <DialogDescription>
+                              Update your vendor profile information.
+                            </DialogDescription>
+                          </DialogHeader>
+                          <div className="grid gap-4 py-5">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                              <FormField
+                                control={form.control}
+                                name="firstName"
+                                render={({ field }) => (
+                                  <FormItem className="grid gap-3">
+                                    <FormLabel>First Name</FormLabel>
+                                    <FormControl>
+                                      <Input {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                              <FormField
+                                control={form.control}
+                                name="lastName"
+                                render={({ field }) => (
+                                  <FormItem className="grid gap-3">
+                                    <FormLabel>Last Name</FormLabel>
+                                    <FormControl>
+                                      <Input {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                            </div>
+                            <FormField
+                              control={form.control}
+                              name="slug"
+                              render={({ field }) => (
+                                <FormItem className="grid gap-3">
+                                  <FormLabel>Slug</FormLabel>
+                                  <FormControl>
+                                    <Input {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            <FormField
+                              control={form.control}
+                              name="email"
+                              render={({ field }) => (
+                                <FormItem className="grid gap-3">
+                                  <FormLabel>Email</FormLabel>
+                                  <FormControl>
+                                    <Input {...field} disabled />
+                                  </FormControl>
+                                  <FormDescription>
+                                    Change your email from account settings.
+                                  </FormDescription>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            <FormField
+                              control={form.control}
+                              name="phoneNumber"
+                              render={({ field }) => (
+                                <FormItem className="grid gap-3">
+                                  <FormLabel>Phone Number</FormLabel>
+                                  <FormControl>
+                                    <Input {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 items-start">
+                              <FormField
+                                control={form.control}
+                                name="dateOfBirth"
+                                render={({ field }) => (
+                                  <FormItem className="grid gap-3">
+                                    <FormLabel>Date of birth</FormLabel>
+                                    <Popover open={open} onOpenChange={setOpen}>
+                                      <PopoverTrigger asChild>
+                                        <FormControl>
+                                          <Button
+                                            variant="outline"
+                                            className="justify-between font-normal w-full"
+                                          >
+                                            {field.value
+                                              ? field.value.slice(0, 10) // Only show YYYY-MM-DD
+                                              : "Select date"}
+                                            <ChevronDownIcon />
+                                          </Button>
+                                        </FormControl>
+                                      </PopoverTrigger>
+                                      <PopoverContent
+                                        className="w-auto overflow-hidden p-0"
+                                        align="start"
+                                      >
+                                        <Calendar
+                                          mode="single"
+                                          selected={
+                                            field.value
+                                              ? new Date(field.value)
+                                              : undefined
+                                          }
+                                          captionLayout="dropdown"
+                                          onSelect={(date) => {
+                                            if (date) {
+                                              const formatted = `${date.getFullYear()}-${String(
+                                                date.getMonth() + 1
+                                              ).padStart(2, "0")}-${String(
+                                                date.getDate()
+                                              ).padStart(2, "0")}`;
+                                              field.onChange(formatted);
+                                            } else {
+                                              field.onChange("");
+                                            }
+                                            setOpen(false);
+                                          }}
+                                        />
+                                      </PopoverContent>
+                                    </Popover>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                              <FormField
+                                control={form.control}
+                                name="gender"
+                                render={({ field }) => (
+                                  <FormItem className="grid gap-3">
+                                    <FormLabel>Select gender</FormLabel>
+                                    <Select
+                                      onValueChange={(value) => {
+                                        field.onChange(value === "true");
+                                      }}
+                                      value={
+                                        field.value !== undefined
+                                          ? String(field.value)
+                                          : ""
+                                      }
+                                    >
+                                      <FormControl>
+                                        <SelectTrigger className="w-full">
+                                          <SelectValue placeholder="Your gender" />
+                                        </SelectTrigger>
+                                      </FormControl>
+                                      <SelectContent>
+                                        <SelectGroup>
+                                          <SelectItem value="true">
+                                            Male
+                                          </SelectItem>
+                                          <SelectItem value="false">
+                                            Female
+                                          </SelectItem>
+                                        </SelectGroup>
+                                      </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                            </div>
+                          </div>
+                          <DialogFooter>
+                            <DialogClose asChild>
+                              <Button variant="outline">Cancel</Button>
+                            </DialogClose>
+                            <Button
+                              type="submit"
+                              disabled={updateProfileMutation.isPending}
+                            >
+                              {updateProfileMutation.isPending
+                                ? "Saving..."
+                                : "Save changes"}
+                            </Button>
+                          </DialogFooter>
+                        </form>
+                      </Form>
+                    </DialogContent>
+                  </Dialog>
                 </div>
               </div>
             </div>
@@ -265,49 +543,17 @@ export default function VendorDashboardPage() {
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="phone">Phone Number</Label>
-                {isEditing ? (
-                  <Input
-                    id="phone"
-                    value={vendorData.phone}
-                    onChange={(e) => updateVendorData("phone", e.target.value)}
-                  />
-                ) : (
-                  <p className="text-sm text-muted-foreground mt-1">
-                    {vendor?.phoneNumber || "Not provided"}
-                  </p>
-                )}
+                <Label htmlFor="phoneNumber">Phone Number</Label>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {vendor?.phoneNumber || "Not provided"}
+                </p>
               </div>
               <div>
                 <Label htmlFor="email">Email Address</Label>
-                {isEditing ? (
-                  <Input
-                    id="email"
-                    type="email"
-                    value={vendorData.email}
-                    onChange={(e) => updateVendorData("email", e.target.value)}
-                  />
-                ) : (
-                  <p className="text-sm text-muted-foreground mt-1">
-                    {vendor?.email}
-                  </p>
-                )}
-              </div>
-            </div>
-
-            <div>
-              <Label htmlFor="hours">Business Hours</Label>
-              {isEditing ? (
-                <Input
-                  id="hours"
-                  value={vendorData.hours}
-                  onChange={(e) => updateVendorData("hours", e.target.value)}
-                />
-              ) : (
                 <p className="text-sm text-muted-foreground mt-1">
-                  {vendorData.hours}
+                  {vendor?.email}
                 </p>
-              )}
+              </div>
             </div>
             <Separator />
             <CardTitle>Your Shop Information</CardTitle>
@@ -321,47 +567,6 @@ export default function VendorDashboardPage() {
               <Link href="#" className="underline text-sm">
                 Change shop name
               </Link>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Shop Settings */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Shop Settings</CardTitle>
-            <CardDescription>
-              Manage your shop visibility and order preferences
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <Label>Shop Status</Label>
-                <p className="text-sm text-muted-foreground">
-                  Make your shop visible to customers
-                </p>
-              </div>
-              <Switch
-                checked={vendorData.isActive}
-                onCheckedChange={(checked) =>
-                  updateVendorData("isActive", checked)
-                }
-              />
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div>
-                <Label>Accepting Orders</Label>
-                <p className="text-sm text-muted-foreground">
-                  Allow customers to place new orders
-                </p>
-              </div>
-              <Switch
-                checked={vendorData.acceptingOrders}
-                onCheckedChange={(checked) =>
-                  updateVendorData("acceptingOrders", checked)
-                }
-              />
             </div>
           </CardContent>
         </Card>

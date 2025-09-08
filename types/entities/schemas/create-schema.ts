@@ -32,13 +32,14 @@ export const createProductSchema = z.object({
     .max(5, "Maximum 5 images allowed"),
   ColorId: z
     .array(z.number().int("ColorId must be an integer"))
-    .optional(),
+    .min(1, "At least one color is required"),
   SizeId: z
     .array(z.number().int("SizeId must be an integer"))
-    .optional(),
+    .min(1, "At least one size is required"),
   TagId: z
     .array(z.number().int("TagId must be an integer"))
-    .optional(),
+    .min(1, "At least one tag is required"),
+  SKU: z.string().max(50, "SKU must be less than 50 characters").optional(),
 });
 
 export type CreateProductValues = z.infer<typeof createProductSchema>;

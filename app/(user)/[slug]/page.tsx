@@ -122,7 +122,10 @@ export default function ProfilePage() {
         slug: user.slug || "",
         email: user.email || "",
         phoneNumber: user.phoneNumber || "",
-        dateOfBirth: user.dateOfBirth || "",
+        dateOfBirth:
+          user.dateOfBirth && user.dateOfBirth.length >= 10
+            ? user.dateOfBirth.slice(0, 10)
+            : "",
         gender: user.gender ?? undefined,
       });
     }
@@ -471,9 +474,7 @@ export default function ProfilePage() {
                                           className="justify-between font-normal w-full"
                                         >
                                           {field.value
-                                            ? new Date(
-                                                field.value
-                                              ).toLocaleDateString()
+                                            ? field.value.slice(0, 10) // Only show YYYY-MM-DD
                                             : "Select date"}
                                           <ChevronDownIcon />
                                         </Button>
@@ -554,7 +555,9 @@ export default function ProfilePage() {
                           <DialogClose asChild>
                             <Button variant="outline">Cancel</Button>
                           </DialogClose>
-                          <Button type="submit">Save changes</Button>
+                          <Button type="submit" disabled={updateAvatarMutation.isPending}>
+                            {updateAvatarMutation.isPending ? "Saving..." : "Save changes"}
+                          </Button>
                         </DialogFooter>
                       </form>
                     </Form>
